@@ -1,0 +1,93 @@
+Pixamo is a web application (SAAS) that is build for Moroccan Accounting Firms, every accountant can extract and process his invoices automatically, and then export them to any third party software.
+ 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Third Party Integrations : 
+
+- Email : IMAP and SMTP
+- Sendify : Whatsapp API and Webhook, there is a detailed documentation on how to send and capture messages and files through Whatsapp
+- AWS S3 Bucket 
+- Google Drive
+- Google Doc AI OCR
+- Extraction API : We built this API, this one can organize extracted Data from Invoices
+- Process API : We are building this API, this one can process the item lines
+- Company API (ICE and Acitivity)
+
+ 
+
+
+
+
+
+
+
+****************************************************************************  
+
+                                PAGES
+
+****************************************************************************
+
+
+
+
++++ Documents : (Action, Name, Status, Date added )
+
+
+
+
+
+In this section, we will be able to import invoices (PDF, and all image formats) and also see all the captured invoices that we get from Whatsapp and email.
+If we click on import button we can see drag and drop place, and Folder name selection (We can quick add new folder if the name of the folder that we put doesn't exist)
+Here we can preview our invoices, delete, bulk select, change folder (Add to the following / Remove from the following ), and Export
+We can also have a Folder field to type a folder name, it will filter all the documents and show only documents that are inside the typed folder, also we can type in search field ex: Pixamo, and then show any document that contains pixamo
+Each Document that we capture or import, it will be processed using GOOGLE Doc AI OCR, and its data will be saved in the database as its content, and the document itself will be stored in AWS s3 bucket or Google Drive
+If we click on an invoice, it will redirect us to Analyse page.
+
+
+
+
+
+
+
+
+
++++ Folders : (Action, Name, Invoices)
+
+In this section, we will be able to organize the documents that we have, we can create a folder and make some conditions.
+Conditions that we will have are :
+ 
+ - Content (starts with, ends with, contains) : This filter will put invoices based on their content, for example : if I select contains "Pixamo", then this folder will have all the invoices that "Pixamo" is in their content.
+ - Source (Email/Whatsapp) : Here I need to write an email or a whatsapp number, for example if I put my email, then this folder will contain all of the invoices that are sent to my email, same thing with whatsapp
+ - Sender (Email/Whatsapp) : Here I need to write an email or a whatsapp number, for example if I put +1 010101 whatsapp number, then this folder will contain all the invoices that I receive from this number
+ - Date (Capture Date / Invoice Date) : I need to select one of them, then choose one of these (Today, Yesterday, Greater than, Greater than or equal, less than, less than or equal, custom range from-to ) after that enter a date, in custom range I need to enter 2 dates
+ - Status (Pending / Extracted / Processed / Verified / Failed / Exported), I need to select one of them
+
+I should have an option to add another condition with And / Or
+ 
+
+If I click on View x folders, it sould redirect me to Documents page but with folder already filtered
+
+
+
+
+
+
+
+
++++ Analyse : (Invoice preview, Folder, Process button, Confirm button, Download Button, Unlock button)
+
+
+This page will contain only one invoice in the screen, I can modify the name, I can move to other invoices that are in the same folder,  If I click on Extract, then we will call our Extraction API, after that, we need to click on Process button, we will call our Process API, these 2 APIs will give us JSON responses, that contain some fields about this invoice.
+After processing, we can modify the results, but after we click on confirm button, we can't modify until we click on unlock button and then confirm again, after confirmation we can export the invoice.
+
+
+
+
+
+Settings : (profile, password, integration )
+
+
+In the profile section I can change the Name, email, Profile picture, and Title
+In the password section, I can change and confirm my new password
+In the integration section, I can integrate AWS S3 bucket, Google Drive, Gmail/outlook, Sendify(Whatsapp). We can enable/disable any third party app, we can enter and check the settings to connect the app. 
