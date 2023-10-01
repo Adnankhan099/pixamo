@@ -14,10 +14,11 @@ import * as Yup from 'yup'
 import useAuth from 'utils/hooks/useAuth'
 
 const validationSchema = Yup.object().shape({
-    userName: Yup.string().required('Please enter your user name'),
+    email: Yup.string().required('Please enter your email').email('Invalid email address'),
     password: Yup.string().required('Please enter your password'),
     rememberMe: Yup.bool(),
-})
+});
+
 
 const SignInForm = (props) => {
     const {
@@ -32,10 +33,10 @@ const SignInForm = (props) => {
     const { signIn } = useAuth()
 
     const onSignIn = async (values, setSubmitting) => {
-        const { userName, password } = values
+        const { email, password } = values
         setSubmitting(true)
 
-        const result = await signIn({ userName, password })
+        const result = await signIn({ email, password })
 
         if (result.status === 'failed') {
             setMessage(result.message)
@@ -53,8 +54,8 @@ const SignInForm = (props) => {
             )}
             <Formik
                 initialValues={{
-                    userName: 'admin',
-                    password: '123Qwe',
+                    email: 'asd@asd.asd',
+                    password: 'asd123',
                     rememberMe: true,
                 }}
                 validationSchema={validationSchema}
@@ -75,9 +76,9 @@ const SignInForm = (props) => {
                                 errorMessage={errors.userName}
                             >
                                 <Field
-                                    type="text"
+                                    type="email"
                                     autoComplete="off"
-                                    name="userName"
+                                    name="email"
                                     placeholder="User Name"
                                     component={Input}
                                 />

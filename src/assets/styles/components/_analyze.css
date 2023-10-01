@@ -1,0 +1,7 @@
+.extractPortion{
+    @apply bg-gray-200 dark:bg-gray-800;
+}
+
+.extractDiv{
+    @apply dark:bg-gray-600;
+}

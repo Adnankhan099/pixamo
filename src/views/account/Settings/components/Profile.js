@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     Input,
     Avatar,
@@ -23,6 +23,8 @@ import {
     HiOutlineGlobeAlt,
 } from 'react-icons/hi'
 import * as Yup from 'yup'
+import { useSelector } from 'react-redux'
+import axios from 'axios'
 
 const { Control } = components
 
@@ -83,12 +85,20 @@ const CustomControl = ({ children, ...props }) => {
 }
 
 const Profile = ({ data }) => {
+    const { token } = useSelector((state) => state.auth.session)
+    const { avatar, userName, email, authority } = useSelector(
+        (state) => state.auth.user
+    )
+    const [localAvatar, setlocalAvatar] = useState(avatar)
+    const [localUserName, setlocalUserName] = useState(userName)
+    const [localEmail, setlocalEmail] = useState(email)
+    const [localAuthority, setlocalAuthority] = useState(authority)
+    const [localTitle, setlocalTitle] = useState('')
     const onSetFormFile = (form, field, file) => {
         form.setFieldValue(field.name, URL.createObjectURL(file[0]))
     }
 
     const onFormSubmit = (values, setSubmitting) => {
-
         console.log('val', values)
         toast.push(<Notification title={'Profile updated'} type="success" />, {
             placement: 'top-center',
@@ -96,17 +106,40 @@ const Profile = ({ data }) => {
         setSubmitting(false)
     }
 
+    const onSubmit = async () => {
+        const data = {
+            avatar: localAvatar ? localAvatar : '',
+            userName: localUserName,
+            email: localEmail,
+            authority: localAuthority ? localAuthority : [],
+            title: localTitle,
+        }
+        const header = { authorization: `Bearer ${token}` }
+        console.log('submit')
+
+        try {
+            const res = await axios.post(
+                `${process.env.REACT_APP_URL}user/update`,
+                data,
+                { headers: header }
+            )
+            console.log('res', res)
+        } catch (error) {
+            console.log('Error=>', error)
+        }
+    }
+
     return (
         <Formik
-            initialValues={data}
+            // initialValues={data}
             enableReinitialize
             validationSchema={validationSchema}
-            onSubmit={(values, { setSubmitting }) => {
-                setSubmitting(true)
-                setTimeout(() => {
-                    onFormSubmit(values, setSubmitting)
-                }, 1000)
-            }}
+            // onSubmit={(values, { setSubmitting }) => {
+            //     setSubmitting(true)
+            //     setTimeout(() => {
+            //         onFormSubmit(values, setSubmitting)
+            //     }, 1000)
+            // }}
         >
             {({ values, touched, errors, isSubmitting, resetForm }) => {
                 const validatorProps = { touched, errors }
@@ -126,8 +159,12 @@ const Profile = ({ data }) => {
                                     type="text"
                                     autoComplete="off"
                                     name="name"
+                                    value={localUserName}
                                     placeholder="Name"
                                     component={Input}
+                                    onChange={(e) => {
+                                        setlocalUserName(e.target.value)
+                                    }}
                                     prefix={
                                         <HiOutlineUserCircle className="text-xl" />
                                     }
@@ -144,6 +181,10 @@ const Profile = ({ data }) => {
                                     name="email"
                                     placeholder="Email"
                                     component={Input}
+                                    value={localEmail}
+                                    onChange={(e) => {
+                                        setlocalEmail(e.target.value)
+                                    }}
                                     prefix={
                                         <HiOutlineMail className="text-xl" />
                                     }
@@ -203,12 +244,16 @@ const Profile = ({ data }) => {
                                     name="title"
                                     placeholder="Title"
                                     component={Input}
+                                    value={localTitle}
+                                    onChange={(e) => {
+                                        setlocalTitle(e.target.value)
+                                    }}
                                     prefix={
                                         <HiOutlineBriefcase className="text-xl" />
                                     }
                                 />
                             </FormRow>
-                            <FormDesription
+                            {/* <FormDesription
                                 className="mt-8"
                                 title="Preferences"
                                 desc="Your personalized preference displayed in your account"
@@ -267,19 +312,20 @@ const Profile = ({ data }) => {
                                 border={false}
                             >
                                 <Field name="syncData" component={Switcher} />
-                            </FormRow>
+                            </FormRow>*/}
                             <div className="mt-4 ltr:text-right">
-                                <Button
+                                {/* <Button
                                     className="ltr:mr-2 rtl:ml-2"
                                     type="button"
                                     onClick={resetForm}
                                 >
                                     Reset
-                                </Button>
+                                </Button> */}
                                 <Button
                                     variant="solid"
                                     loading={isSubmitting}
                                     type="submit"
+                                    onClick={onSubmit}
                                 >
                                     {isSubmitting ? 'Updating' : 'Update'}
                                 </Button>

@@ -1,50 +1,68 @@
-
-import React, { useState } from 'react'
-import { Button, Dialog } from 'components/ui'
-import Form from './form'
 import { HiOutlinePencil } from 'react-icons/hi'
-import useThemeClass from 'utils/hooks/useThemeClass'
+import React, { useState } from 'react'
+import { Button } from 'components/ui'
+import Form from './form'
+import { HiPlusCircle } from 'react-icons/hi'
+import axios from 'axios'
+import { Drawer } from 'components/ui'
+import { useSelector, useDispatch } from 'react-redux'
 
-// import UploadModal from './UploadModal'
+export const SidePanel = (props) => {
+    const dispatch = useDispatch()
 
-const EditOption = () => {
-    const { textTheme } = useThemeClass()
-    const [dialogIsOpen, setIsOpen] = useState(false)
+    const { className, ...rest } = props
 
-    const openDialog = () => {
-        setIsOpen(true)
+    const [panelExpand, setPanelExpand] = useState(false)
+
+    const direction = useSelector((state) => state.theme.direction)
+
+    const openPanel = () => {
+        dispatch(setPanelExpand(true))
     }
 
-    const onDialogClose = (e) => {
-        console.log('onDialogClose', e)
-        setIsOpen(false)
+    const closePanel = () => {
+        dispatch(setPanelExpand(false))
+        const bodyClassList = document.body.classList
+        if (bodyClassList.contains('drawer-lock-scroll')) {
+            bodyClassList.remove('drawer-lock-scroll', 'drawer-open')
+        }
     }
 
-    const onDialogOk = (e) => {
-        console.log('onDialogOk', e)
-        setIsOpen(false)
+    const { token } = useSelector((state) => state.auth.session)
+
+    const header = { authorization: `Bearer ${token}` }
+
+    const onDialogOk = async (name) => {
+        const res = await axios.post(
+            `${process.env.REACT_APP_URL}folder?name=${name}`,
+            { headers: header }
+        )
+        console.log('res', res)
+        // setIsOpen(false)
+        if (res) window.location.reload()
     }
 
     return (
         <>
             <span
                 className={`cursor-pointer p-2 hover:text-[#5271FF]`}
-                onClick={openDialog}
+                onClick={openPanel}
             >
                 <HiOutlinePencil />
             </span>
-            <Dialog
-                isOpen={dialogIsOpen}
-                onClose={onDialogClose}
-                onRequestClose={onDialogClose}
-                bodyOpenClassName="overflow-hidden"
+            <Drawer
+                title="Theme Config"
+                isOpen={panelExpand}
+                onClose={closePanel}
+                onRequestClose={closePanel}
+                placement={direction === 'rtl' ? 'left' : 'right'}
+                width={375}
             >
                 <h5 className="mb-4">Upload your files</h5>
-                <Form close={onDialogClose}/>
-            </Dialog>
+                <Form close={() => {}} save={onDialogOk} />
+            </Drawer>
         </>
     )
 }
 
-export default EditOption
-
+export default SidePanel

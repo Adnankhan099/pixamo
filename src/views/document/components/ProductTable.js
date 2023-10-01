@@ -4,16 +4,20 @@ import { DataTable } from 'components/shared'
 import { HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi'
 import { FiPackage } from 'react-icons/fi'
 import { useDispatch, useSelector } from 'react-redux'
-import { getProducts, setTableData } from '../store/dataSlice'
+import {
+    getProducts,
+    setTableData,
+    updateProductList,
+} from '../store/dataSlice'
 import { setSelectedProduct } from '../store/stateSlice'
 import { toggleDeleteConfirmation } from '../store/stateSlice'
 import useThemeClass from 'utils/hooks/useThemeClass'
 import ProductDeleteConfirmation from './ProductDeleteConfirmation'
 import { useNavigate } from 'react-router-dom'
 import cloneDeep from 'lodash/cloneDeep'
-import { data1 } from './data'
 import StaticBackdrop from './dialog'
 import EditOption from './editOption'
+import axios from 'axios'
 
 const inventoryStatusColor = {
     0: {
@@ -33,23 +37,28 @@ const inventoryStatusColor = {
     },
 }
 
-const ActionColumn = ({ row }) => {
+const ActionColumn = ({ row, header }) => {
     const dispatch = useDispatch()
-    const { textTheme } = useThemeClass()
-    const navigate = useNavigate()
+    // const { textTheme } = useThemeClass()
+    // const navigate = useNavigate()
 
-    const onEdit = () => {
-        return <StaticBackdrop />
-    }
+    // const onEdit = () => {
+    //     return <StaticBackdrop />
+    // }
 
-    const onDelete = () => {
+    const onDelete = async () => {
+        const response = await axios.delete(
+            `${process.env.REACT_APP_URL}document/${row.id}`,
+            { headers: header }
+        )
+        console.log(response)
         dispatch(toggleDeleteConfirmation(true))
         dispatch(setSelectedProduct(row.id))
     }
 
     return (
         <div className="flex justify-end text-lg">
-            <EditOption />
+            <EditOption row={row} header={header} />
             <span
                 className="cursor-pointer p-2 hover:text-red-500"
                 onClick={onDelete}
@@ -76,7 +85,9 @@ const ProductColumn = ({ row }) => {
 }
 
 const ProductTable = () => {
+    const { token } = useSelector((state) => state.auth.session)
     const tableRef = useRef(null)
+    const data = useSelector((state) => state.salesProductList.data.productList)
 
     const dispatch = useDispatch()
 
@@ -89,13 +100,20 @@ const ProductTable = () => {
     )
 
     const loading = useSelector((state) => state.salesProductList.data.loading)
+    const header = { authorization: `Bearer ${token}` }
 
-    const data = data1
+    const getData = async () => {
+        const response = await axios.get(
+            'https://api.voagstech.com/api/document',
+            { headers: header }
+        )
+        dispatch(updateProductList(response.data.data))
+    }
 
-    useEffect(() => {
-        fetchData()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pageIndex, pageSize, sort])
+    // useEffect(() => {
+    //     fetchData()
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [pageIndex, pageSize, sort])
 
     useEffect(() => {
         if (tableRef) {
@@ -103,14 +121,18 @@ const ProductTable = () => {
         }
     }, [filterData])
 
+    useEffect(() => {
+        getData()
+    }, [])
+
     const tableData = useMemo(
         () => ({ pageIndex, pageSize, sort, query, total }),
         [pageIndex, pageSize, sort, query, total]
     )
 
-    const fetchData = () => {
-        dispatch(getProducts({ pageIndex, pageSize, sort, query, filterData }))
-    }
+    // const fetchData = () => {
+    //     dispatch(getProducts({ pageIndex, pageSize, sort, query, filterData }))
+    // }
 
     const columns = useMemo(
         () => [
@@ -120,7 +142,7 @@ const ProductTable = () => {
             },
             {
                 header: 'Folder',
-                accessorKey: 'folder',
+                accessorKey: 'folder_name',
                 sortable: true,
             },
             {
@@ -130,13 +152,15 @@ const ProductTable = () => {
             },
             {
                 header: 'Date added',
-                accessorKey: 'dateAdded',
+                accessorKey: 'created_at',
                 sortable: true,
             },
             {
                 header: '',
                 id: 'action',
-                cell: (props) => <ActionColumn row={props.row.original} />,
+                cell: (props) => (
+                    <ActionColumn row={props.row.original} header={header} />
+                ),
             },
             // {
             //     header: 'Status',

@@ -9,7 +9,7 @@ injectReducer('salesProductList', reducer)
 
 const ProductList = () => {
     return (
-        <AdaptableCard className="h-full" bodyClass="h-full">
+        <AdaptableCard className="h-full p-4" bodyClass="h-full">
             <div className="lg:flex items-center justify-between mb-4">
                 <h3 className="mb-4 lg:mb-0">Folders</h3>
                 <ProductTableTools />

@@ -16,11 +16,43 @@ export async function apiGetSalesProducts(data) {
     })
 }
 
+export async function apiFilteredFolder(data) {
+    return ApiService.fetchData({
+        url: `${process.env.REACT_APP_URL}folder`,
+        method: 'get',
+        data,
+    })
+}
+
+export async function apiFilteredDocument(data) {
+    return ApiService.fetchData({
+        url: `${process.env.REACT_APP_URL}document`,
+        method: 'get',
+        data,
+    })
+}
+
 export async function apiDeleteSalesProducts(data) {
     return ApiService.fetchData({
         url: '/sales/products/delete',
         method: 'delete',
         data,
+    })
+}
+
+export async function apiDeleteFolder(data) {
+    return ApiService.fetchData({
+        url: `${process.env.REACT_APP_URL}folder/${data}`,
+        method: 'delete',
+        // data,
+    })
+}
+
+export async function apiDeleteDocument(data) {
+    return ApiService.fetchData({
+        url: `${process.env.REACT_APP_URL}document/${data}`,
+        method: 'delete',
+        // data,
     })
 }
 

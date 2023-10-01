@@ -13,18 +13,6 @@ const UploadModal = () => {
 
     return (
         <div>
-            <div className="mb-4">
-                <Upload>
-                    <Button
-                        size="sm"
-                        style={{ color: 'white', backgroundColor: '#5271FF' }}
-                        variant="solid"
-                        icon={<HiOutlineCloudUpload />}
-                    >
-                        Upload your file
-                    </Button>
-                </Upload>
-            </div>
             <div>
                 <Upload draggable>
                     <div className="my-16 text-center">

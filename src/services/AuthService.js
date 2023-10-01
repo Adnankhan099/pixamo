@@ -2,7 +2,7 @@ import ApiService from './ApiService'
 
 export async function apiSignIn(data) {
     return ApiService.fetchData({
-        url: '/sign-in',
+        url: 'https://api.voagstech.com/api/auth/login',
         method: 'post',
         data,
     })
@@ -10,7 +10,7 @@ export async function apiSignIn(data) {
 
 export async function apiSignUp(data) {
     return ApiService.fetchData({
-        url: '/sign-up',
+        url: 'https://api.voagstech.com/api/auth/register',
         method: 'post',
         data,
     })
@@ -18,7 +18,7 @@ export async function apiSignUp(data) {
 
 export async function apiSignOut(data) {
     return ApiService.fetchData({
-        url: '/sign-out',
+        url: `https://api.voagstech.com/api/auth/logout/${data}`,
         method: 'post',
         data,
     })

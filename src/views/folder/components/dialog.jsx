@@ -1,47 +1,64 @@
-
 import React, { useState } from 'react'
-import { Button, Dialog } from 'components/ui'
+import { Button } from 'components/ui'
 import Form from './form'
 import { HiPlusCircle } from 'react-icons/hi'
-// import UploadModal from './UploadModal'
+import axios from 'axios'
+import { Drawer } from 'components/ui'
+import { useSelector, useDispatch } from 'react-redux'
 
-const StaticBackdrop = () => {
-    const [dialogIsOpen, setIsOpen] = useState(false)
+export const SidePanel = (props) => {
 
-    const openDialog = () => {
-        setIsOpen(true)
+    const dispatch = useDispatch()
+
+    const { className, ...rest } = props
+
+    const [panelExpand, setPanelExpand] = useState(false)
+
+    const direction = useSelector((state) => state.theme.direction)
+
+    const openPanel = () => {
+        dispatch(setPanelExpand(true))
     }
 
-    const onDialogClose = (e) => {
-        console.log('onDialogClose', e)
-        setIsOpen(false)
+    const closePanel = () => {
+        dispatch(setPanelExpand(false))
+        const bodyClassList = document.body.classList
+        if (bodyClassList.contains('drawer-lock-scroll')) {
+            bodyClassList.remove('drawer-lock-scroll', 'drawer-open')
+        }
     }
 
-    const onDialogOk = (e) => {
-        console.log('onDialogOk', e)
-        setIsOpen(false)
+    const { token } = useSelector(state => state.auth.session)
+
+    const header = { authorization: `Bearer ${token}` }
+
+    const onDialogOk = async (name) => {
+        const res = await axios.post(`${process.env.REACT_APP_URL}folder?name=${name}`,
+            { headers: header }
+        )
+        console.log('res', res)
+        // setIsOpen(false)
+        if (res) window.location.reload();
     }
 
     return (
-        <div>
-            <Button variant="solid" size="sm" icon={<HiPlusCircle />} onClick={() => openDialog()} style={{ backgroundColor: "#5271FF", color: "white" }}>
-                Add Folder
+        <>
+            <Button variant="solid" size="sm" icon={<HiPlusCircle />} onClick={openPanel} style={{ backgroundColor: "#5271FF", color: "white" }}>
+                Import
             </Button>
-            {/* <Button shape="circle" variant="solid" onClick={() => openDialog()} style={{ backgroundColor: "#5271FF", color: "black" }}>
-                Add Folder
-            </Button> */}
-            <Dialog
-                isOpen={dialogIsOpen}
-                onClose={onDialogClose}
-                onRequestClose={onDialogClose}
-                bodyOpenClassName="overflow-hidden"
+            <Drawer
+                title="Theme Config"
+                isOpen={panelExpand}
+                onClose={closePanel}
+                onRequestClose={closePanel}
+                placement={direction === 'rtl' ? 'left' : 'right'}
+                width={375}
             >
                 <h5 className="mb-4">Upload your files</h5>
-                <Form close={onDialogClose} />
-            </Dialog>
-        </div>
+                <Form close={() => { }} save={onDialogOk} />
+            </Drawer>
+        </>
     )
 }
 
-export default StaticBackdrop
-
+export default SidePanel

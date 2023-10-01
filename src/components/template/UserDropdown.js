@@ -27,7 +27,7 @@ const dropdownItemList = [
 ]
 
 export const UserDropdown = ({ className }) => {
-    const { avatar, userName, authority, email } = useSelector(
+    const { avatar, userName, authority, email, id } = useSelector(
         (state) => state.auth.user
     )
 
@@ -35,7 +35,7 @@ export const UserDropdown = ({ className }) => {
 
     const UserAvatar = (
         <div className={classNames(className, 'flex items-center gap-2')}>
-            <Avatar size={32} shape="circle" src={avatar} />
+            <Avatar size={32} shape="circle" src={avatar ? avatar : ''} />
             <div className="hidden md:block">
                 <div className="text-xs capitalize">
                     {authority[0] || 'guest'}
@@ -70,8 +70,8 @@ export const UserDropdown = ({ className }) => {
                         eventKey={item.label}
                         className="mb-1 px-0"
                     >
-                        <Link 
-                            className="flex h-full w-full px-2" 
+                        <Link
+                            className="flex h-full w-full px-2"
                             to={item.path}
                         >
                             <span className="flex gap-2 items-center w-full">
@@ -85,7 +85,7 @@ export const UserDropdown = ({ className }) => {
                 ))}
                 <Dropdown.Item variant="divider" />
                 <Dropdown.Item
-                    onClick={signOut}
+                    onClick={() => signOut(id)}
                     eventKey="Sign Out"
                     className="gap-2"
                 >

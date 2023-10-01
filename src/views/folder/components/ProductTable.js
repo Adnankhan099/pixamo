@@ -1,58 +1,65 @@
 import React, { useEffect, useMemo, useRef } from 'react'
-import { Avatar, Badge } from 'components/ui'
+// import { Avatar } from 'components/ui'
 import { DataTable } from 'components/shared'
-import { HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi'
-import { FiPackage } from 'react-icons/fi'
+import {  HiOutlineTrash } from 'react-icons/hi'
+// import { FiPackage } from 'react-icons/fi'
 import { useDispatch, useSelector } from 'react-redux'
-import { getProducts, setTableData } from '../store/dataSlice'
+import {
+    // getProducts,
+    setTableData,
+    updateProductList,
+} from '../store/dataSlice'
 import { setSelectedProduct } from '../store/stateSlice'
 import { toggleDeleteConfirmation } from '../store/stateSlice'
-import useThemeClass from 'utils/hooks/useThemeClass'
+// import useThemeClass from 'utils/hooks/useThemeClass'
 import ProductDeleteConfirmation from './ProductDeleteConfirmation'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import cloneDeep from 'lodash/cloneDeep'
-import { data1 } from './data'
-import StaticBackdrop from './dialog'
+// import { data1 } from './data'
+// import StaticBackdrop from './dialog'
 import EditOption from './editOption'
+import axios from 'axios'
 
-const inventoryStatusColor = {
-    0: {
-        label: 'In Stock',
-        dotClass: 'bg-emerald-500',
-        textClass: 'text-emerald-500',
-    },
-    1: {
-        label: 'Limited',
-        dotClass: 'bg-amber-500',
-        textClass: 'text-amber-500',
-    },
-    2: {
-        label: 'Out of Stock',
-        dotClass: 'bg-red-500',
-        textClass: 'text-red-500',
-    },
-}
+// const inventoryStatusColor = {
+//     0: {
+//         label: 'In Stock',
+//         dotClass: 'bg-emerald-500',
+//         textClass: 'text-emerald-500',
+//     },
+//     1: {
+//         label: 'Limited',
+//         dotClass: 'bg-amber-500',
+//         textClass: 'text-amber-500',
+//     },
+//     2: {
+//         label: 'Out of Stock',
+//         dotClass: 'bg-red-500',
+//         textClass: 'text-red-500',
+//     },
+// }
 
-const ActionColumn = ({ row }) => {
+const ActionColumn = ({ row, header }) => {
+    // const { token } = useSelector((state) => state.auth.session)
     const dispatch = useDispatch()
-    const { textTheme } = useThemeClass()
-    const navigate = useNavigate()
+    // const { textTheme } = useThemeClass()
+    // const navigate = useNavigate()
 
-    const onEdit = () => {
-        return <StaticBackdrop />
-    }
+    // const onEdit = (row) => {
+    //     return <StaticBackdrop />
+    // }
+    // const header = { Authorization: `Bearer ${token}` }
 
-    const onDelete = () => {
+    const onDelete = (row) => {
         dispatch(toggleDeleteConfirmation(true))
         dispatch(setSelectedProduct(row.id))
     }
 
     return (
         <div className="flex justify-end text-lg">
-            <EditOption />
+            <EditOption row={row} header={header} />
             <span
                 className="cursor-pointer p-2 hover:text-red-500"
-                onClick={onDelete}
+                onClick={()=>onDelete(row)}
             >
                 <HiOutlineTrash />
             </span>
@@ -60,23 +67,26 @@ const ActionColumn = ({ row }) => {
     )
 }
 
-const ProductColumn = ({ row }) => {
-    const avatar = row.img ? (
-        <Avatar src={row.img} />
-    ) : (
-        <Avatar icon={<FiPackage />} />
-    )
+// const ProductColumn = ({ row }) => {
+//     const avatar = row.img ? (
+//         <Avatar src={row.img} />
+//     ) : (
+//         <Avatar icon={<FiPackage />} />
+//     )
 
-    return (
-        <div className="flex items-center">
-            {avatar}
-            <span className={`ml-2 rtl:mr-2 font-semibold`}>{row.name}</span>
-        </div>
-    )
-}
+//     return (
+//         <div className="flex items-center">
+//             {avatar}
+//             <span className={`ml-2 rtl:mr-2 font-semibold`}>{row.name}</span>
+//         </div>
+//     )
+// }
 
 const ProductTable = () => {
+    const { token } = useSelector((state) => state.auth.session)
     const tableRef = useRef(null)
+    const data = useSelector((state) => state.salesProductList.data.productList)
+    console.log(data)
 
     const dispatch = useDispatch()
 
@@ -89,13 +99,22 @@ const ProductTable = () => {
     )
 
     const loading = useSelector((state) => state.salesProductList.data.loading)
+    const header = { Authorization: `Bearer ${token}` }
 
-    const data = data1
-
+    const getData = async () => {
+        const response = await axios.get(`${process.env.REACT_APP_URL}folder`, {
+            headers: header,
+        })
+        dispatch(updateProductList(response.data.data))
+    }
     useEffect(() => {
-        fetchData()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pageIndex, pageSize, sort])
+        getData()
+    }, [])
+
+    // useEffect(() => {
+    //     fetchData()
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [pageIndex, pageSize, sort])
 
     useEffect(() => {
         if (tableRef) {
@@ -108,25 +127,27 @@ const ProductTable = () => {
         [pageIndex, pageSize, sort, query, total]
     )
 
-    const fetchData = () => {
-        dispatch(getProducts({ pageIndex, pageSize, sort, query, filterData }))
-    }
+    // const fetchData = () => {
+    //     dispatch(getProducts({ pageIndex, pageSize, sort, query, filterData }))
+    // }
 
     const columns = useMemo(
         () => [
             {
                 header: 'Name',
-                accessorKey: 'folder',
+                accessorKey: 'name',
             },
             {
                 header: 'Invoices',
-                accessorKey: 'invoice',
+                accessorKey: 'count',
                 sortable: true,
             },
             {
                 header: '',
                 id: 'action',
-                cell: (props) => <ActionColumn row={props.row.original} />,
+                cell: (props) => (
+                    <ActionColumn row={props.row.original} header={header} />
+                ),
             },
             // {
             //     header: 'Status',

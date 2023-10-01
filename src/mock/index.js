@@ -99,7 +99,7 @@ export default function mockServer({ environment = 'test' }) {
             crmFakeApi(this, apiPrefix)
             salesFakeApi(this, apiPrefix)
             accountFakeApi(this, apiPrefix)
-            authFakeApi(this, apiPrefix)
+            // authFakeApi(this, apiPrefix)
             cryptoFakeApi(this, apiPrefix)
             knowledgeBaseFakeApi(this, apiPrefix)
         },

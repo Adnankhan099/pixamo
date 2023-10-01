@@ -1,19 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {
-    apiGetSalesProducts,
-    apiDeleteSalesProducts,
+    apiFilteredFolder,
+    apiDeleteFolder,
 } from 'services/SalesService'
 
 export const getProducts = createAsyncThunk(
     'salesProductList/data/getProducts',
     async (data) => {
-        const response = await apiGetSalesProducts(data)
+        const response = await apiFilteredFolder(data)
         return response.data
     }
 )
 
 export const deleteProduct = async (data) => {
-    const response = await apiDeleteSalesProducts(data)
+    const response = await apiDeleteFolder(data.id)
     return response.data
 }
 
@@ -56,6 +56,7 @@ const dataSlice = createSlice({
     },
     extraReducers: {
         [getProducts.fulfilled]: (state, action) => {
+            console.log('action.payload', action.payload)
             state.productList = action.payload.data
             state.tableData.total = action.payload.total
             state.loading = false
@@ -66,10 +67,7 @@ const dataSlice = createSlice({
     },
 })
 
-export const {
-    updateProductList,
-    setTableData,
-    setFilterData,
-} = dataSlice.actions
+export const { updateProductList, setTableData, setFilterData } =
+    dataSlice.actions
 
 export default dataSlice.reducer

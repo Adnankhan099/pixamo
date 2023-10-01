@@ -20,8 +20,8 @@ function useAuth() {
         try {
             const resp = await apiSignIn(values)
             if (resp.data) {
-                const { token } = resp.data
-                dispatch(onSignInSuccess(token))
+                const tokenData = resp.data.token
+                dispatch(onSignInSuccess(tokenData))
                 if (resp.data.user) {
                     dispatch(
                         setUser(
@@ -35,6 +35,7 @@ function useAuth() {
                     )
                 }
                 const redirectUrl = query.get(REDIRECT_URL_KEY)
+                console.log('redirextURL', redirectUrl)
                 navigate(
                     redirectUrl ? redirectUrl : appConfig.authenticatedEntryPath
                 )
@@ -44,6 +45,7 @@ function useAuth() {
                 }
             }
         } catch (errors) {
+            console.log('Error', errors)
             return {
                 status: 'failed',
                 message: errors?.response?.data?.message || errors.toString(),
@@ -92,8 +94,13 @@ function useAuth() {
         navigate(appConfig.unAuthenticatedEntryPath)
     }
 
-    const signOut = async () => {
-        await apiSignOut()
+    const signOut = async (data) => {
+        await apiSignOut(data)
+        handleSignOut()
+    }
+
+    const signOutUserDropdown = async (data) => {
+        await apiSignOut(data)
         handleSignOut()
     }
 
@@ -102,6 +109,7 @@ function useAuth() {
         signIn,
         signUp,
         signOut,
+        signOutUserDropdown,
     }
 }
 

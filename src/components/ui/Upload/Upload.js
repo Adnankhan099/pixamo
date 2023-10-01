@@ -7,7 +7,9 @@ import FileItem from './FileItem'
 import Button from '../Buttons'
 import CloseButton from '../CloseButton'
 import Notification from '../Notification'
+import { setFile } from 'store/upload/uploadSlice'
 import toast from '../toast'
+import { useDispatch } from 'react-redux'
 
 const filesToArray = (files) => Object.keys(files).map((key) => files[key])
 
@@ -30,6 +32,7 @@ const Upload = React.forwardRef((props, ref) => {
         form,
         ...rest
     } = props
+    const dispatch = useDispatch()
 
     const fileInputField = useRef(null)
     const [files, setFiles] = useState(fileList)
@@ -96,6 +99,7 @@ const Upload = React.forwardRef((props, ref) => {
         if (result) {
             let updatedFiles = addNewFiles(newFiles)
             setFiles(updatedFiles)
+            dispatch(setFile(updatedFiles))
             onChange?.(updatedFiles, files)
         }
     }
