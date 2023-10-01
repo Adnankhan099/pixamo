@@ -7,7 +7,7 @@ import axios from 'axios'
 import { Drawer } from 'components/ui'
 import { useSelector, useDispatch } from 'react-redux'
 
-export const SidePanel = (props) => {
+export const SidePanel = ({ row, header }, props) => {
     const dispatch = useDispatch()
 
     const { className, ...rest } = props
@@ -30,11 +30,11 @@ export const SidePanel = (props) => {
 
     const { token } = useSelector((state) => state.auth.session)
 
-    const header = { authorization: `Bearer ${token}` }
-
     const onDialogOk = async (name) => {
+        const id = encodeURIComponent(JSON.stringify([row.id]))
         const res = await axios.post(
-            `${process.env.REACT_APP_URL}folder?name=${name}`,
+            `${process.env.REACT_APP_URL}folder/update?name=${name}&id=${id}`,
+            null,
             { headers: header }
         )
         console.log('res', res)

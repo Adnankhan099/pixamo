@@ -4,8 +4,9 @@ import { ConfirmDialog } from 'components/shared'
 import { useSelector, useDispatch } from 'react-redux'
 import { toggleDeleteConfirmation } from '../store/stateSlice'
 import { deleteProduct, getProducts } from '../store/dataSlice'
+import axios from 'axios'
 
-const ProductDeleteConfirmation = () => {
+const ProductDeleteConfirmation = ({header}) => {
     const dispatch = useDispatch()
     const dialogOpen = useSelector(
         (state) => state.salesProductList.state.deleteConfirmation
@@ -23,9 +24,16 @@ const ProductDeleteConfirmation = () => {
 
     const onDelete = async () => {
         dispatch(toggleDeleteConfirmation(false))
-        const success = await deleteProduct({ id: selectedProduct })
+        const id = encodeURIComponent(JSON.stringify([selectedProduct]))
+        const response = await axios.post(
+            `${process.env.REACT_APP_URL}document/delete?id=${id}`,
+            null,
+            { headers: header }
+        )
+        console.log(response)
+        // const success = await deleteProduct({ id:  })
 
-        if (success) {
+        if (response) {
             dispatch(getProducts(tableData))
             toast.push(
                 <Notification

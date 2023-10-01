@@ -19,6 +19,8 @@ import {
 } from 'react-icons/hi'
 import dayjs from 'dayjs'
 import * as Yup from 'yup'
+import axios from 'axios'
+import { useSelector } from 'react-redux'
 
 const LoginHistoryIcon = ({ type }) => {
     switch (type) {
@@ -46,7 +48,23 @@ const validationSchema = Yup.object().shape({
 })
 
 const Password = ({ data }) => {
-    const onFormSubmit = (values, setSubmitting) => {
+    const { token } = useSelector((state) => state.auth.session)
+    const onFormSubmit =async (values, setSubmitting) => {
+        const data = {
+            password:values.newPassword
+        }
+        const header = { authorization: `Bearer ${token}` }
+        console.log('submit')
+
+        try {
+            const res = await axios.post(
+                `${process.env.REACT_APP_URL}user/update`,
+                data,
+                { headers: header }
+            )
+        } catch (error) {
+            console.log(error)
+        }
         toast.push(<Notification title={'Password updated'} type="success" />, {
             placement: 'top-center',
         })

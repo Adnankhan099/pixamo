@@ -207,7 +207,7 @@ const ProductTable = () => {
                 onSelectChange={onSelectChange}
                 onSort={onSort}
             />
-            <ProductDeleteConfirmation />
+            <ProductDeleteConfirmation header={header}/>
         </>
     )
 }

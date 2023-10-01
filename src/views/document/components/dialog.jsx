@@ -11,7 +11,7 @@ import { Drawer } from 'components/ui'
 import { useSelector, useDispatch } from 'react-redux'
 
 export const SidePanel = (props) => {
-    const { file } = useSelector(state => state.upload)
+    const fileData = useSelector(state => state.upload.file)
     const dispatch = useDispatch()
 
     const { className, ...rest } = props
@@ -44,13 +44,11 @@ export const SidePanel = (props) => {
     // }
     const header = { authorization: `Bearer ${token}` }
 
-    console.log(file)
-    const onDialogOk = async (name, folder_id) => {
-        console.log(file)
-        const data = {
-            file: file[0]
-        }
-        const res = await axios.post(`${process.env.REACT_APP_URL}document?name=${name}&folder_id=${folder_id}`, data, { headers: header })
+    const onDialogOk = async (name, folder_id, fileData) => {
+        console.log(fileData)
+        const formData = new FormData()
+        formData.append('file', fileData)
+        const res = await axios.post(`${process.env.REACT_APP_URL}document?name=${name}&folder_id=${folder_id}`, formData, { headers: header })
         console.log(res)
         // setIsOpen(false)
         if (res) window.location.reload();
@@ -102,7 +100,7 @@ export const SidePanel = (props) => {
                         size="sm"
                         style={{ color: 'white', backgroundColor: '#5271FF' }}
                         variant="solid"
-                        onClick={() => onDialogOk(documentName, selectedFolderToAddDoc)}
+                        onClick={() => onDialogOk(documentName, selectedFolderToAddDoc, fileData[0])}
                     >
                         Okay
                     </Button>

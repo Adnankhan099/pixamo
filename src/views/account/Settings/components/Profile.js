@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
     Input,
     Avatar,
@@ -26,8 +26,6 @@ import * as Yup from 'yup'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
 
-const { Control } = components
-
 const validationSchema = Yup.object().shape({
     name: Yup.string()
         .min(3, 'Too Short!')
@@ -36,110 +34,55 @@ const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email Required'),
     title: Yup.string(),
     avatar: Yup.string(),
-    lang: Yup.string(),
-    timeZone: Yup.string(),
-    syncData: Yup.bool(),
 })
 
-const langOptions = [
-    { value: 'en', label: 'English (US)', imgPath: '/img/countries/us.png' },
-    { value: 'ch', label: '中文', imgPath: '/img/countries/cn.png' },
-    { value: 'jp', label: '日本语', imgPath: '/img/countries/jp.png' },
-    { value: 'fr', label: 'French', imgPath: '/img/countries/fr.png' },
-]
-
-const CustomSelectOption = ({ innerProps, label, data, isSelected }) => {
-    return (
-        <div
-            className={`flex items-center justify-between p-2 ${
-                isSelected
-                    ? 'bg-gray-100 dark:bg-gray-500'
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-600'
-            }`}
-            {...innerProps}
-        >
-            <div className="flex items-center">
-                <Avatar shape="circle" size={20} src={data.imgPath} />
-                <span className="ml-2 rtl:mr-2">{label}</span>
-            </div>
-            {isSelected && <HiCheck className="text-emerald-500 text-xl" />}
-        </div>
-    )
-}
-
-const CustomControl = ({ children, ...props }) => {
-    const selected = props.getValue()[0]
-    return (
-        <Control {...props}>
-            {selected && (
-                <Avatar
-                    className="ltr:ml-4 rtl:mr-4"
-                    shape="circle"
-                    size={18}
-                    src={selected.imgPath}
-                />
-            )}
-            {children}
-        </Control>
-    )
-}
-
-const Profile = ({ data }) => {
+const Profile = () => {
     const { token } = useSelector((state) => state.auth.session)
-    const { avatar, userName, email, authority } = useSelector(
-        (state) => state.auth.user
-    )
-    const [localAvatar, setlocalAvatar] = useState(avatar)
-    const [localUserName, setlocalUserName] = useState(userName)
-    const [localEmail, setlocalEmail] = useState(email)
-    const [localAuthority, setlocalAuthority] = useState(authority)
-    const [localTitle, setlocalTitle] = useState('')
+    const { userName, email, avatar } = useSelector((state) => state.auth.user)
+    const data = {
+        name: userName,
+        email: email,
+        avatar: avatar,
+        title: '',
+    }
     const onSetFormFile = (form, field, file) => {
         form.setFieldValue(field.name, URL.createObjectURL(file[0]))
     }
 
-    const onFormSubmit = (values, setSubmitting) => {
+    const onFormSubmit = async (values, setSubmitting) => {
         console.log('val', values)
+        const reqData = {
+            userName: values.name,
+            email: values.email,
+            avatar: values.avatar,
+            title: values.title,
+        }
+        const header = {
+            Authorization: `Bearer ${token}`,
+        }
+        const res = await axios.post(
+            `${process.env.REACT_APP_URL}user/update`,
+            reqData,
+            { headers: header }
+        )
+        console.log('res=>', res)
         toast.push(<Notification title={'Profile updated'} type="success" />, {
             placement: 'top-center',
         })
         setSubmitting(false)
     }
 
-    const onSubmit = async () => {
-        const data = {
-            avatar: localAvatar ? localAvatar : '',
-            userName: localUserName,
-            email: localEmail,
-            authority: localAuthority ? localAuthority : [],
-            title: localTitle,
-        }
-        const header = { authorization: `Bearer ${token}` }
-        console.log('submit')
-
-        try {
-            const res = await axios.post(
-                `${process.env.REACT_APP_URL}user/update`,
-                data,
-                { headers: header }
-            )
-            console.log('res', res)
-        } catch (error) {
-            console.log('Error=>', error)
-        }
-    }
-
     return (
         <Formik
-            // initialValues={data}
+            initialValues={data}
             enableReinitialize
             validationSchema={validationSchema}
-            // onSubmit={(values, { setSubmitting }) => {
-            //     setSubmitting(true)
-            //     setTimeout(() => {
-            //         onFormSubmit(values, setSubmitting)
-            //     }, 1000)
-            // }}
+            onSubmit={(values, { setSubmitting }) => {
+                setSubmitting(true)
+                setTimeout(() => {
+                    onFormSubmit(values, setSubmitting)
+                }, 1000)
+            }}
         >
             {({ values, touched, errors, isSubmitting, resetForm }) => {
                 const validatorProps = { touched, errors }
@@ -151,7 +94,7 @@ const Profile = ({ data }) => {
                                 desc="Basic info, like your name and address that will displayed in public"
                             />
                             <FormRow
-                                name="name"
+                                name="userName"
                                 label="Name"
                                 {...validatorProps}
                             >
@@ -159,12 +102,8 @@ const Profile = ({ data }) => {
                                     type="text"
                                     autoComplete="off"
                                     name="name"
-                                    value={localUserName}
                                     placeholder="Name"
                                     component={Input}
-                                    onChange={(e) => {
-                                        setlocalUserName(e.target.value)
-                                    }}
                                     prefix={
                                         <HiOutlineUserCircle className="text-xl" />
                                     }
@@ -181,10 +120,6 @@ const Profile = ({ data }) => {
                                     name="email"
                                     placeholder="Email"
                                     component={Input}
-                                    value={localEmail}
-                                    onChange={(e) => {
-                                        setlocalEmail(e.target.value)
-                                    }}
                                     prefix={
                                         <HiOutlineMail className="text-xl" />
                                     }
@@ -244,75 +179,11 @@ const Profile = ({ data }) => {
                                     name="title"
                                     placeholder="Title"
                                     component={Input}
-                                    value={localTitle}
-                                    onChange={(e) => {
-                                        setlocalTitle(e.target.value)
-                                    }}
                                     prefix={
                                         <HiOutlineBriefcase className="text-xl" />
                                     }
                                 />
                             </FormRow>
-                            {/* <FormDesription
-                                className="mt-8"
-                                title="Preferences"
-                                desc="Your personalized preference displayed in your account"
-                            />
-                            <FormRow
-                                name="lang"
-                                label="Language"
-                                {...validatorProps}
-                            >
-                                <Field name="lang">
-                                    {({ field, form }) => (
-                                        <Select
-                                            field={field}
-                                            form={form}
-                                            options={langOptions}
-                                            components={{
-                                                Option: CustomSelectOption,
-                                                Control: CustomControl,
-                                            }}
-                                            value={langOptions.filter(
-                                                (option) =>
-                                                    option.value ===
-                                                    values?.lang
-                                            )}
-                                            onChange={(option) =>
-                                                form.setFieldValue(
-                                                    field.name,
-                                                    option.value
-                                                )
-                                            }
-                                        />
-                                    )}
-                                </Field>
-                            </FormRow>
-                            <FormRow
-                                name="timeZone"
-                                label="Time Zone"
-                                {...validatorProps}
-                            >
-                                <Field
-                                    type="text"
-                                    readOnly
-                                    autoComplete="off"
-                                    name="timeZone"
-                                    placeholder="Time Zone"
-                                    component={Input}
-                                    prefix={
-                                        <HiOutlineGlobeAlt className="text-xl" />
-                                    }
-                                />
-                            </FormRow>
-                            <FormRow
-                                name="syncData"
-                                label="Sync Data"
-                                {...validatorProps}
-                                border={false}
-                            >
-                                <Field name="syncData" component={Switcher} />
-                            </FormRow>*/}
                             <div className="mt-4 ltr:text-right">
                                 {/* <Button
                                     className="ltr:mr-2 rtl:ml-2"
@@ -325,7 +196,6 @@ const Profile = ({ data }) => {
                                     variant="solid"
                                     loading={isSubmitting}
                                     type="submit"
-                                    onClick={onSubmit}
                                 >
                                     {isSubmitting ? 'Updating' : 'Update'}
                                 </Button>

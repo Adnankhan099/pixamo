@@ -13,13 +13,17 @@ const ConditionsSelect = () => {
     const option = resData.map((item) => {
         return { value: item.id, label: item.name }
     })
+    const { selectedFolderToAddDoc } = useSelector(
+        (state) => state.salesProductList.data
+    )
+    console.log(selectedFolderToAddDoc)
     const dispatch= useDispatch()
 
     const getData = async () => {
         const response = await axios.get(`${process.env.REACT_APP_URL}folder`, {
             headers: header,
         })
-        setResData(response.data)
+        setResData(response.data.data)
     }
     useEffect(() => {
         getData()

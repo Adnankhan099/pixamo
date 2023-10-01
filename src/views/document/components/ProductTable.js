@@ -18,6 +18,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import StaticBackdrop from './dialog'
 import EditOption from './editOption'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
 
 const inventoryStatusColor = {
     0: {
@@ -47,11 +48,6 @@ const ActionColumn = ({ row, header }) => {
     // }
 
     const onDelete = async () => {
-        const response = await axios.delete(
-            `${process.env.REACT_APP_URL}document/${row.id}`,
-            { headers: header }
-        )
-        console.log(response)
         dispatch(toggleDeleteConfirmation(true))
         dispatch(setSelectedProduct(row.id))
     }
@@ -133,12 +129,19 @@ const ProductTable = () => {
     // const fetchData = () => {
     //     dispatch(getProducts({ pageIndex, pageSize, sort, query, filterData }))
     // }
+    const openURLInNewTab = (url) => {
+        window.open(url, '_blank');
+      };
 
     const columns = useMemo(
         () => [
             {
                 header: 'Name',
                 accessorKey: 'name',
+                cell: (props) => {
+                    const { name, url } = props.row.original
+                    return <div onClick={() => openURLInNewTab(url)}>{name}</div>
+                },
             },
             {
                 header: 'Folder',
@@ -220,7 +223,7 @@ const ProductTable = () => {
                 onSelectChange={onSelectChange}
                 onSort={onSort}
             />
-            <ProductDeleteConfirmation />
+            <ProductDeleteConfirmation header={header} />
         </>
     )
 }

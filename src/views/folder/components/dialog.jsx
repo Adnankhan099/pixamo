@@ -33,9 +33,13 @@ export const SidePanel = (props) => {
     const header = { authorization: `Bearer ${token}` }
 
     const onDialogOk = async (name) => {
-        const res = await axios.post(`${process.env.REACT_APP_URL}folder?name=${name}`,
-            { headers: header }
-        )
+        const res = await axios.post(
+            `${process.env.REACT_APP_URL}folder?name=${name}`,
+            null,
+            {
+                headers: header
+            }
+        );
         console.log('res', res)
         // setIsOpen(false)
         if (res) window.location.reload();
