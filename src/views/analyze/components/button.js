@@ -4,7 +4,7 @@ import { Button } from 'components/ui'
 const DialogButton = (props) => {
     const { children,onClick } = props
     return (
-        <div className="flex-wrap inline-flex xl:flex items-center gap-2">
+        <div className="flex-wrap inline-flex xl:flex items-end ml-auto lg:items-center gap-2">
             <Button
                 onClick={onClick}
                 size="sm"

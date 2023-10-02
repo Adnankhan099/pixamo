@@ -51,7 +51,7 @@ export const SidePanel = (props) => {
         formData.append('file', fileData)
         const id = encodeURIComponent(JSON.stringify([props.row.id]))
         const res = await axios.post(
-            `${process.env.REACT_APP_URL}document/update?name=${name}&id=${id}`,
+            `https://api.voagstech.com/api/document/update?name=${name}&id=${id}&folder_id=${folder_id}`,
             formData,
             { headers: header }
         )

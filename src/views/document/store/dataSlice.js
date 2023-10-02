@@ -70,7 +70,7 @@ const dataSlice = createSlice({
     },
 })
 
-export const { updateProductList, setTableData, setFilterData,selectFolder } =
+export const { updateProductList, setTableData, setFilterData, selectFolder } =
     dataSlice.actions
 
 export default dataSlice.reducer

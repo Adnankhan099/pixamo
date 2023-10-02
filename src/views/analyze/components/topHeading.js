@@ -1,12 +1,12 @@
 import React from 'react'
-import ConditionsSelect from './select'
+import MultiSelection from './select'
 
-const TopHeading = () => {
+const TopHeading = ({option,setSelected}) => {
     return (
-        <div className="flex gap-4 items-center w-[35%]">
+        <div className="flex gap-4 items-center lg:w-[35%] w-[50%]">
             {/* <label className="text-xl font-bold">Folder</label> */}
             <div className="w-full">
-                <ConditionsSelect />
+                <MultiSelection option={option} setSelected={setSelected}/>
             </div>
         </div>
     )

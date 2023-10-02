@@ -17,10 +17,10 @@ const ConditionsSelect = () => {
         (state) => state.salesProductList.data
     )
     console.log(selectedFolderToAddDoc)
-    const dispatch= useDispatch()
+    const dispatch = useDispatch()
 
     const getData = async () => {
-        const response = await axios.get(`${process.env.REACT_APP_URL}folder`, {
+        const response = await axios.get(`https://api.voagstech.com/api/folder`, {
             headers: header,
         })
         setResData(response.data.data)
@@ -28,13 +28,16 @@ const ConditionsSelect = () => {
     useEffect(() => {
         getData()
     }, [])
-    
+
     return (
         <div>
             <Select
                 placeholder="Please Select"
                 options={option}
-                onChange={(e) => dispatch(selectFolder(e.value))}
+                onChange={(e) => {
+                    console.log(e.value)
+                    dispatch(selectFolder(e.value))
+                }}
             ></Select>
         </div>
     )

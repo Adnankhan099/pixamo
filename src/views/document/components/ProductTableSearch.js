@@ -21,6 +21,7 @@ const ProductTableSearch = () => {
         const newTableData = cloneDeep(tableData)
         newTableData.query = val
         newTableData.pageIndex = 1
+        console.log('Query', val)
         if (typeof val === 'string' && val.length > 1) {
             fetchData(newTableData)
         }

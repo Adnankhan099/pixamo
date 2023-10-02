@@ -8,7 +8,7 @@ import StaticBackdrop from './dialog'
 
 const ProductTableTools = () => {
     return (
-        <div className="flex flex-col lg:flex-row lg:items-center">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-2">
             <ProductTableSearch />
             <ProductFilter />
             <Link

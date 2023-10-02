@@ -46,9 +46,10 @@ export const SidePanel = (props) => {
 
     const onDialogOk = async (name, folder_id, fileData) => {
         console.log(fileData)
+        console.log(folder_id)
         const formData = new FormData()
         formData.append('file', fileData)
-        const res = await axios.post(`${process.env.REACT_APP_URL}document?name=${name}&folder_id=${folder_id}`, formData, { headers: header })
+        const res = await axios.post(`https://api.voagstech.com/api/document?name=${name}&folder_id=${folder_id}`, formData, { headers: header })
         console.log(res)
         // setIsOpen(false)
         if (res) window.location.reload();

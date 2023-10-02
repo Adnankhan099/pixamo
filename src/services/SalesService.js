@@ -18,17 +18,15 @@ export async function apiGetSalesProducts(data) {
 
 export async function apiFilteredFolder(data) {
     return ApiService.fetchData({
-        url: `${process.env.REACT_APP_URL}folder`,
+        url: `https://api.voagstech.com/api/folder?filter=${data.query}`,
         method: 'get',
-        data,
     })
 }
 
 export async function apiFilteredDocument(data) {
     return ApiService.fetchData({
-        url: `${process.env.REACT_APP_URL}document`,
+        url: `https://api.voagstech.com/api/document?filter=${data.query}`,
         method: 'get',
-        data,
     })
 }
 

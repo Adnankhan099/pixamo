@@ -11,6 +11,7 @@ import {
     FormContainer,
 } from 'components/ui'
 import FormDesription from './FormDesription'
+import { setUser } from 'store/auth/userSlice'
 import FormRow from './FormRow'
 import { Field, Form, Formik } from 'formik'
 import { components } from 'react-select'
@@ -23,7 +24,7 @@ import {
     HiOutlineGlobeAlt,
 } from 'react-icons/hi'
 import * as Yup from 'yup'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
 const validationSchema = Yup.object().shape({
@@ -37,6 +38,7 @@ const validationSchema = Yup.object().shape({
 })
 
 const Profile = () => {
+    const dispatch = useDispatch()
     const { token } = useSelector((state) => state.auth.session)
     const { userName, email, avatar } = useSelector((state) => state.auth.user)
     const data = {
@@ -65,6 +67,7 @@ const Profile = () => {
             reqData,
             { headers: header }
         )
+        if (res) dispatch(setUser(res.data.user))
         console.log('res=>', res)
         toast.push(<Notification title={'Profile updated'} type="success" />, {
             placement: 'top-center',

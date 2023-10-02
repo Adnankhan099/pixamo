@@ -1,11 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ImageZoom from './components/ImageZoom'
 import TopHeading from './components/topHeading'
 import ExtractedDataPortion from './components/ExtractedDataPortion'
 import LineItems from './components/LineItems'
 import ButtonGroup from './components/ButtonGroup'
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import axios from 'axios'
 
-const index = () => {
+const Index = () => {
+    const [selected, setSelected] = useState(null)
+    const [id, setId] = useState([])
+    const [defaultId, setDefaultId] = useState()
+    const [defaultFolder, setDefaultFolder] = useState()
+    const [url, setUrl] = useState('')
     const extractFunction = () => {
         console.log('Extract')
     }
@@ -37,15 +45,69 @@ const index = () => {
             onClick: extractFunction,
         },
     ]
+
+    const { token } = useSelector((state) => state.auth.session)
+    const [option, setOption] = useState([])
+    const header = {
+        Authorization: `Bearer ${token}`,
+    }
+    const getFolders = async () => {
+        const res = await axios.get(`${process.env.REACT_APP_URL}folder`, {
+            headers: header,
+        })
+        setDefaultId(res.data.data[0].id)
+        console.log(res.data.data)
+        setOption(
+            res.data.data.map((item) => ({ value: item.id, label: item.name }))
+        )
+    }
+
+    const getFiles = async () => {
+        const res = await axios.get(
+            `${
+                process.env.REACT_APP_URL
+            }analyze/pdf?folder_id=${encodeURIComponent(JSON.stringify(id))}`,
+            {
+                headers: header,
+            }
+        )
+        console.log(res.data)
+        setDefaultFolder(res.data)
+        setUrl(res.data.url)
+    }
+    useEffect(() => {
+        getFolders()
+    }, [])
+
+    useEffect(() => {
+        if (defaultId) {
+            getFiles()
+        }
+    }, [defaultId, id])
+
+    useEffect(() => {
+        if (selected) {
+            console.log(selected)
+            setId(selected.map((item) => item.value))
+        }
+    }, [selected])
+    console.log(id)
+
     return (
         <div>
             <div className="grid grid-col-1 sm:grid-cols-7">
                 <div className="sm:col-span-3 p-4 mx-auto">
-                    <ImageZoom />
+                    <ImageZoom
+                        defaultFolder={defaultFolder}
+                        url={url}
+                        setDefaultFolder={setDefaultFolder}
+                        folder_id={id}
+                        setUrl={setUrl}
+                    />
                 </div>
                 <div className="sm:col-span-4 flex flex-col gap-3 mt-4 md:mt-0">
-                    <div className="flex justify-between items-center w-[100%]">
-                        <TopHeading />
+                    <div className="flex items-end justify-between w-[100%] gap-2 lg:gap-0">
+                        <TopHeading option={option} setSelected={setSelected} />
                         <ButtonGroup data={buttonData} />
                     </div>
                     <ExtractedDataPortion />
@@ -56,4 +118,4 @@ const index = () => {
     )
 }
 
-export default index
+export default Index

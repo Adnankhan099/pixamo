@@ -1,21 +1,83 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Document, Page } from 'react-pdf'
-import pdfFile from './Design_Document.pdf'
 import {
-    AiOutlineArrowDown,
-    AiOutlineArrowUp,
-    AiOutlineArrowLeft,
-    AiOutlineArrowRight,
-} from 'react-icons/ai'
-import {BsArrowLeftSquareFill,BsArrowRightSquareFill,BsArrowDownSquareFill,BsArrowUpSquareFill } from "react-icons/bs"
+    BsArrowLeftSquareFill,
+    BsArrowRightSquareFill,
+    BsArrowDownSquareFill,
+    BsArrowUpSquareFill,
+} from 'react-icons/bs'
 import Tooltip from 'components/ui/Tooltip'
+import axios from 'axios'
+import { useSelector } from 'react-redux'
 
-function ImageZoom() {
+function ImageZoom({
+    defaultFolder,
+    url,
+    setDefaultFolder,
+    folder_id,
+    setUrl,
+}) {
+    const { token } = useSelector((state) => state.auth.session)
     const [numPages, setNumPages] = useState()
     const [pageNumber, setPageNumber] = useState(1)
 
     function onDocumentLoadSuccess({ numPages }) {
         setNumPages(numPages)
+    }
+
+    const [pageWidth, setPageWidth] = useState('400')
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 1300 && window.innerWidth > 1000) {
+                setPageWidth('300')
+            } else if (window.innerWidth < 1000 && window.innerWidth > 650) {
+                setPageWidth('200')
+            } else if (window.innerWidth < 650 && window.innerWidth > 500) {
+                setPageWidth('500')
+            } else {
+                setPageWidth('400')
+            }
+        }
+
+        window.addEventListener('resize', handleResize)
+        return () => {
+            window.removeEventListener('resize', handleResize)
+        }
+    }, [])
+
+    const onClickNext = async () => {
+        const res = await axios.get(
+            `${process.env.REACT_APP_URL}analyze/pdf?id=${
+                defaultFolder.id
+            }&folder_id=${encodeURIComponent(
+                JSON.stringify(folder_id)
+            )}&type=next`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+        console.log(res.data)
+        setDefaultFolder(res.data)
+        setUrl(res.data.url)
+    }
+    const onClickBack = async () => {
+        const res = await axios.get(
+            `${process.env.REACT_APP_URL}analyze/pdf?id=${
+                defaultFolder.id
+            }&folder_id=${encodeURIComponent(
+                JSON.stringify(folder_id)
+            )}&type=back`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+        console.log(res.data)
+        setDefaultFolder(res.data)
+        setUrl(res.data.url)
     }
 
     return (
@@ -24,15 +86,15 @@ function ImageZoom() {
                 <div className="flex justify-between">
                     <div
                         className="hover:cursor-pointer text-3xl"
-                        onClick={() => {}}
+                        onClick={onClickBack}
                     >
                         <Tooltip title="Move to previous invoice">
-                            <BsArrowLeftSquareFill  />
+                            <BsArrowLeftSquareFill />
                         </Tooltip>
                     </div>
                     <div
                         className="hover:cursor-pointer text-3xl"
-                        onClick={() => {}}
+                        onClick={onClickNext}
                     >
                         <Tooltip title="Move to next invoice">
                             <BsArrowRightSquareFill />
@@ -44,13 +106,13 @@ function ImageZoom() {
                         Page {pageNumber} of {numPages}
                     </p>
                     <Document
-                        file={pdfFile}
+                        file={url}
                         onLoadSuccess={onDocumentLoadSuccess}
                         className="flex justify-center items-center"
                     >
                         <Page
                             pageNumber={pageNumber}
-                            width="400"
+                            width={pageWidth}
                             renderTextLayer={false}
                             renderAnnotationLayer={false}
                             customTextRenderer={false}

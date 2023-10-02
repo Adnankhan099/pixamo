@@ -26,7 +26,7 @@ const ProductDeleteConfirmation = ({header}) => {
         dispatch(toggleDeleteConfirmation(false))
         const id = encodeURIComponent(JSON.stringify([selectedProduct]))
         const response = await axios.post(
-            `${process.env.REACT_APP_URL}document/delete?id=${id}`,
+            `https://api.voagstech.com/api/document/delete?id=${id}`,
             null,
             { headers: header }
         )
