@@ -3,6 +3,7 @@ import appConfig from 'configs/app.config'
 
 const initialState = {
     file: "",
+    url:""
 }
 
 export const localeSlice = createSlice({
@@ -12,9 +13,12 @@ export const localeSlice = createSlice({
         setFile: (state, action) => {
             state.file = action.payload
         },
+        setUrl: (state, action) => {
+            state.url = action.payload
+        }
     },
 })
 
-export const { setFile } = localeSlice.actions
+export const { setFile,setUrl } = localeSlice.actions
 
 export default localeSlice.reducer

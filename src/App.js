@@ -12,10 +12,9 @@ import './locales'
 import { pdfjs } from 'react-pdf'
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
-  import.meta.url
+    'pdfjs-dist/build/pdf.worker.min.js',
+    import.meta.url
 ).toString()
-
 const environment = process.env.NODE_ENV
 
 // if (appConfig.enableMock) {

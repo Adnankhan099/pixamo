@@ -14,14 +14,11 @@ import FormDesription from './FormDesription'
 import { setUser } from 'store/auth/userSlice'
 import FormRow from './FormRow'
 import { Field, Form, Formik } from 'formik'
-import { components } from 'react-select'
 import {
     HiOutlineUserCircle,
     HiOutlineMail,
     HiOutlineBriefcase,
     HiOutlineUser,
-    HiCheck,
-    HiOutlineGlobeAlt,
 } from 'react-icons/hi'
 import * as Yup from 'yup'
 import { useSelector, useDispatch } from 'react-redux'
@@ -40,35 +37,39 @@ const validationSchema = Yup.object().shape({
 const Profile = () => {
     const dispatch = useDispatch()
     const { token } = useSelector((state) => state.auth.session)
-    const { userName, email, avatar } = useSelector((state) => state.auth.user)
+    const { userName, email, avatar, title } = useSelector(
+        (state) => state.auth.user
+    )
     const data = {
         name: userName,
         email: email,
         avatar: avatar,
-        title: '',
+        title: title,
     }
-    const onSetFormFile = (form, field, file) => {
-        form.setFieldValue(field.name, URL.createObjectURL(file[0]))
+    const onSetFormFile = (form, field, files) => {
+        form.setFieldValue(field.name, files[0])
     }
 
     const onFormSubmit = async (values, setSubmitting) => {
-        console.log('val', values)
-        const reqData = {
-            userName: values.name,
-            email: values.email,
-            avatar: values.avatar,
-            title: values.title,
+        const formData = new FormData()
+
+        formData.append('userName', values.name)
+        formData.append('email', values.email)
+        formData.append('title', values.title)
+
+        // Check if values.avatar is a file object
+        if (values.avatar instanceof File) {
+            formData.append('avatar', values.avatar)
         }
         const header = {
             Authorization: `Bearer ${token}`,
         }
         const res = await axios.post(
             `${process.env.REACT_APP_URL}user/update`,
-            reqData,
+            formData,
             { headers: header }
         )
         if (res) dispatch(setUser(res.data.user))
-        console.log('res=>', res)
         toast.push(<Notification title={'Profile updated'} type="success" />, {
             placement: 'top-center',
         })

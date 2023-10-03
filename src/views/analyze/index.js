@@ -7,13 +7,16 @@ import ButtonGroup from './components/ButtonGroup'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
+import { useDispatch } from 'react-redux'
+import { setUrl } from 'store/upload/uploadSlice'
 
 const Index = () => {
+    const dispatch = useDispatch()
     const [selected, setSelected] = useState(null)
     const [id, setId] = useState([])
     const [defaultId, setDefaultId] = useState()
     const [defaultFolder, setDefaultFolder] = useState()
-    const [url, setUrl] = useState('')
+    const [url, SetUrl] = useState('')
     const extractFunction = () => {
         console.log('Extract')
     }
@@ -73,7 +76,8 @@ const Index = () => {
         )
         console.log(res.data)
         setDefaultFolder(res.data)
-        setUrl(res.data.url)
+        SetUrl(res.data.url)
+        dispatch(setUrl(res.data.url))
     }
     useEffect(() => {
         getFolders()
@@ -102,7 +106,7 @@ const Index = () => {
                         url={url}
                         setDefaultFolder={setDefaultFolder}
                         folder_id={id}
-                        setUrl={setUrl}
+                        SetUrl={SetUrl}
                     />
                 </div>
                 <div className="sm:col-span-4 flex flex-col gap-3 mt-4 md:mt-0">

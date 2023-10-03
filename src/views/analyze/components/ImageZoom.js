@@ -15,8 +15,10 @@ function ImageZoom({
     url,
     setDefaultFolder,
     folder_id,
-    setUrl,
+    SetUrl,
 }) {
+    const fileUrl=useSelector((state)=>state.upload.url)
+    console.log(fileUrl)
     const { token } = useSelector((state) => state.auth.session)
     const [numPages, setNumPages] = useState()
     const [pageNumber, setPageNumber] = useState(1)
@@ -58,9 +60,8 @@ function ImageZoom({
                 },
             }
         )
-        console.log(res.data)
         setDefaultFolder(res.data)
-        setUrl(res.data.url)
+        SetUrl(res.data.url)
     }
     const onClickBack = async () => {
         const res = await axios.get(
@@ -75,9 +76,8 @@ function ImageZoom({
                 },
             }
         )
-        console.log(res.data)
         setDefaultFolder(res.data)
-        setUrl(res.data.url)
+        SetUrl(res.data.url)
     }
 
     return (
@@ -106,7 +106,7 @@ function ImageZoom({
                         Page {pageNumber} of {numPages}
                     </p>
                     <Document
-                        file={url}
+                        file={fileUrl}
                         onLoadSuccess={onDocumentLoadSuccess}
                         className="flex justify-center items-center"
                     >
