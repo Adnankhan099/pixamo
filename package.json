@@ -2,6 +2,7 @@
   "name": "elstar",
   "version": "1.3.4",
   "private": true,
+  "homepage": "https://newproject.voagstech.com",
   "dependencies": {
     "@fullcalendar/daygrid": "^5.10.1",
     "@fullcalendar/interaction": "^5.10.1",
@@ -31,6 +32,7 @@
     "dayjs": "^1.11.5",
     "formik": "^2.2.9",
     "framer-motion": "^4.1.17",
+    "gh-pages": "^6.0.0",
     "history": "^5.0.0",
     "html-react-parser": "^3.0.4",
     "http-proxy-middleware": "^2.0.6",
