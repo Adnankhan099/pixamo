@@ -31,7 +31,7 @@ const ConditionsSelect = ({row}) => {
 
     useEffect(() => {
         if (row) {
-            // dispatch(selectFolder(36))
+            dispatch(selectFolder(row.folder_id))
         }
     }, [])
 
