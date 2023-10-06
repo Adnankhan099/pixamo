@@ -12,8 +12,7 @@ import { useSelector, useDispatch } from 'react-redux'
 export const SidePanel = (props) => {
     const fileData = useSelector((state) => state.upload.file)
     const dispatch = useDispatch()
-
-    const { className, ...rest } = props
+    const { className,row } = props
 
     const [panelExpand, setPanelExpand] = useState(false)
 
@@ -37,14 +36,15 @@ export const SidePanel = (props) => {
     const { selectedFolderToAddDoc } = useSelector(
         (state) => state.salesProductList.data
     )
-    console.log(selectedFolderToAddDoc)
-
+    
     // const onDialogClose = (e) => {
     //     console.log('onDialogClose', e)
     //     setIsOpen(false)
     // }
     const header = { authorization: `Bearer ${token}` }
-
+    
+    console.log("selectedFOlder",selectedFolderToAddDoc)
+    // alert("hello")
     const onDialogOk = async (name, folder_id, fileData) => {
         // console.log('onDialogOk', e)
         const formData = new FormData()
@@ -59,6 +59,8 @@ export const SidePanel = (props) => {
         // setIsOpen(false)
         if (res) window.location.reload()
     }
+
+    console.log("farman",row)
 
     return (
         <>
@@ -81,7 +83,7 @@ export const SidePanel = (props) => {
                     <label className="block text-gray-700 text-sm font-bold mb-2">
                         Folder Name
                     </label>
-                    <ConditionsSelect />
+                    <ConditionsSelect row={row}/>
                 </div>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2">

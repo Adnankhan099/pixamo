@@ -6,7 +6,7 @@ import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { selectFolder } from '../store/dataSlice'
 
-const ConditionsSelect = () => {
+const ConditionsSelect = ({row}) => {
     const [resData, setResData] = React.useState([])
     const { token } = useSelector((state) => state.auth.session)
     const header = { Authorization: `Bearer ${token}` }
@@ -29,15 +29,25 @@ const ConditionsSelect = () => {
         getData()
     }, [])
 
+    useEffect(() => {
+        if (row) {
+            dispatch(selectFolder(row.folder_id))
+        }
+    }, [])
+
+    
+
+
     return (
         <div>
             <Select
                 placeholder="Please Select"
                 options={option}
                 onChange={(e) => {
-                    console.log(e.value)
+                    console.log("selsect",e.value,row)
                     dispatch(selectFolder(e.value))
                 }}
+                value={option.find((item) => item.value === row.folder_id)}
             ></Select>
         </div>
     )
