@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from 'components/ui'
 import { Input } from 'components/ui'
 import { GrDocument } from 'react-icons/gr'
@@ -61,6 +61,12 @@ export const SidePanel = (props) => {
     }
 
     console.log("farman",row)
+    useEffect(()=>{
+      if(row){
+          setDocumentName(row.name)
+      }
+    },[row])
+
 
     return (
         <>
@@ -83,7 +89,9 @@ export const SidePanel = (props) => {
                     <label className="block text-gray-700 text-sm font-bold mb-2">
                         Folder Name
                     </label>
-                    <ConditionsSelect row={row}/>
+                    <ConditionsSelect
+                        row={row}
+                    />
                 </div>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2">
