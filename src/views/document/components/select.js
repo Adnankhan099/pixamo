@@ -7,12 +7,16 @@ import { useDispatch } from 'react-redux'
 import { selectFolder } from '../store/dataSlice'
 import { useState } from 'react'
 
-const ConditionsSelect = ({row}) => {
+const ConditionsSelect = ({ row, setSelectedFolder, selectedFolder, }) => {
     const [resData, setResData] = React.useState([])
-    const [selectedValue,setSelectedValue] = useState(null)
+    const [selectedValue, setSelectedValue] = useState(null)
     const { token } = useSelector((state) => state.auth.session)
     const header = { Authorization: `Bearer ${token}` }
-    const [option,setOption] = useState([])
+    const [option, setOption] = useState([])
+
+    useEffect(() => {
+        getData()
+    }, [])
 
     useEffect(() => {
         const list = resData.map((item) => {
@@ -21,43 +25,41 @@ const ConditionsSelect = ({row}) => {
         console.log('hellyeah', list)
         setOption(list)
     }, [resData])
- 
-    const { selectedFolderToAddDoc } = useSelector(
-        (state) => state.salesProductList.data
-    )
-    console.log(selectedFolderToAddDoc)
+
     const dispatch = useDispatch()
 
     const getData = async () => {
-        const response = await axios.get(`https://api.voagstech.com/api/folder`, {
-            headers: header,
-        })
+        const response = await axios.get(
+            `https://api.voagstech.com/api/folder`,
+            {
+                headers: header,
+            }
+        )
         setResData(response.data.data)
     }
-    useEffect(() => {
-        getData()
-    }, [])
 
     useEffect(() => {
         if (row) {
-            dispatch(selectFolder(row.folder_id))
+            setSelectedFolder(row.folder_id)
+            // dispatch(selectFolder(row.folder_id))
         }
     }, [])
-    
-    useEffect(() => {
-        // console.log('selectedFolderToAddDoc:', selectedFolderToAddDoc)
-        // console.log('row:', row)
-        const waspa = option.find(
-            (item) => item.value === selectedFolderToAddDoc
-        )
 
-        console.log('helloboys', option, waspa)
+    useEffect(() => {
+        const waspa = option.find((item) => item.value === selectedFolder)
+
 
         setSelectedValue(waspa)
-    }, [selectedFolderToAddDoc, row, option])
-    
+    }, [selectedFolder, row, option])
 
-    
+    console.log('ramaya', selectedFolder)
+
+    const handleChangeSelect = (value) => {
+        setSelectedFolder(value)
+    }
+
+
+        console.log('overbigdedha', selectedFolder)
 
 
     return (
@@ -67,7 +69,8 @@ const ConditionsSelect = ({row}) => {
                 options={option}
                 onChange={(e) => {
                     console.log('selsect', e.value, row)
-                    dispatch(selectFolder(e.value))
+                    handleChangeSelect(e.value)
+                    // dispatch(selectFolder(e.value))
                 }}
                 // value={option.find((item) => item.value === row?.folder_id)}
                 value={selectedValue}
