@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 // import { Avatar } from 'components/ui'
 import { DataTable } from 'components/shared'
 import {  HiOutlineTrash } from 'react-icons/hi'
@@ -38,7 +38,7 @@ import axios from 'axios'
 //     },
 // }
 
-const ActionColumn = ({ row, header }) => {
+const ActionColumn = ({ row, header, setGetDataApiFlag }) => {
     // const { token } = useSelector((state) => state.auth.session)
     const dispatch = useDispatch()
     // const { textTheme } = useThemeClass()
@@ -56,10 +56,14 @@ const ActionColumn = ({ row, header }) => {
 
     return (
         <div className="flex justify-end text-lg">
-            <EditOption row={row} header={header} />
+            <EditOption
+                row={row}
+                header={header}
+                setGetDataApiFlag={setGetDataApiFlag}
+            />
             <span
                 className="cursor-pointer p-2 hover:text-red-500"
-                onClick={()=>onDelete(row)}
+                onClick={() => onDelete(row)}
             >
                 <HiOutlineTrash />
             </span>
@@ -85,7 +89,8 @@ const ActionColumn = ({ row, header }) => {
 const ProductTable = () => {
     const { token } = useSelector((state) => state.auth.session)
     const tableRef = useRef(null)
-    const data = useSelector((state) => state.salesProductList.data.productList)
+    const data = useSelector((state) => state.salesProductList.data.productList) 
+    const [getDataApiFlag,setGetDataApiFlag] = useState(true)
     console.log(data)
 
     const dispatch = useDispatch()
@@ -109,7 +114,7 @@ const ProductTable = () => {
     }
     useEffect(() => {
         getData()
-    }, [])
+    }, [getDataApiFlag])
 
     // useEffect(() => {
     //     fetchData()
@@ -146,7 +151,11 @@ const ProductTable = () => {
                 header: '',
                 id: 'action',
                 cell: (props) => (
-                    <ActionColumn row={props.row.original} header={header} />
+                    <ActionColumn
+                        row={props.row.original}
+                        header={header}
+                        setGetDataApiFlag={setGetDataApiFlag}
+                    />
                 ),
             },
             // {
@@ -207,7 +216,7 @@ const ProductTable = () => {
                 onSelectChange={onSelectChange}
                 onSort={onSort}
             />
-            <ProductDeleteConfirmation header={header}/>
+            <ProductDeleteConfirmation header={header} />
         </>
     )
 }

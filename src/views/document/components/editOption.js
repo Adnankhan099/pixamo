@@ -33,9 +33,11 @@ export const SidePanel = (props) => {
     const { token } = useSelector((state) => state.auth.session)
     // const [dialogIsOpen, setIsOpen] = useState(false)
     const [documentName, setDocumentName] = useState('')
-    const { selectedFolderToAddDoc } = useSelector(
-        (state) => state.salesProductList.data
-    )
+    const[selectedFolder,setSelectedFolder] = useState(null)
+    const[testing,setTesting] = useState(null)
+    // const { selectedFolderToAddDoc } = useSelector(
+    //     (state) => state.salesProductList.data
+    // )
     
     // const onDialogClose = (e) => {
     //     console.log('onDialogClose', e)
@@ -43,7 +45,6 @@ export const SidePanel = (props) => {
     // }
     const header = { authorization: `Bearer ${token}` }
     
-    console.log("selectedFOlder",selectedFolderToAddDoc)
     // alert("hello")
     const onDialogOk = async (name, folder_id, fileData) => {
         // console.log('onDialogOk', e)
@@ -66,6 +67,13 @@ export const SidePanel = (props) => {
           setDocumentName(row.name)
       }
     },[row])
+
+    // useEffect(() => {
+    //     if(!panelExpand){
+    //         setSelectedFolder(null)
+    //     }
+    // }, [panelExpand])
+
 
 
     return (
@@ -91,6 +99,8 @@ export const SidePanel = (props) => {
                     </label>
                     <ConditionsSelect
                         row={row}
+                        setSelectedFolder={setSelectedFolder}
+                        selectedFolder={selectedFolder}
                     />
                 </div>
                 <div className="mb-4">
@@ -122,7 +132,7 @@ export const SidePanel = (props) => {
                         onClick={() =>
                             onDialogOk(
                                 documentName,
-                                selectedFolderToAddDoc,
+                                selectedFolder,
                                 fileData[0]
                             )
                         }

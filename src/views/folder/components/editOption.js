@@ -7,7 +7,7 @@ import axios from 'axios'
 import { Drawer } from 'components/ui'
 import { useSelector, useDispatch } from 'react-redux'
 
-export const SidePanel = ({ row, header }, props) => {
+export const SidePanel = ({ row, header, setGetDataApiFlag }, props) => {
     const dispatch = useDispatch()
 
     const { className, ...rest } = props
@@ -39,7 +39,10 @@ export const SidePanel = ({ row, header }, props) => {
         )
         console.log('res', res)
         // setIsOpen(false)
-        if (res) window.location.reload()
+        if (res) {
+            setGetDataApiFlag((pre)=>!pre)
+            closePanel()
+        }
     }
 
     return (

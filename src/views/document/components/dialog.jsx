@@ -17,6 +17,7 @@ export const SidePanel = (props) => {
     const { className, ...rest } = props
 
     const [panelExpand, setPanelExpand] = useState(false)
+        const [selectedFolder, setSelectedFolder] = useState(null)
 
     const direction = useSelector((state) => state.theme.direction)
 
@@ -57,7 +58,13 @@ export const SidePanel = (props) => {
 
     return (
         <>
-            <Button variant="solid" size="sm" icon={<HiPlusCircle />} onClick={openPanel} style={{ backgroundColor: "#5271FF", color: "white" }}>
+            <Button
+                variant="solid"
+                size="sm"
+                icon={<HiPlusCircle />}
+                onClick={openPanel}
+                style={{ backgroundColor: '#5271FF', color: 'white' }}
+            >
                 Import
             </Button>
             <Drawer
@@ -73,7 +80,10 @@ export const SidePanel = (props) => {
                     <label className="block text-gray-700 text-sm font-bold mb-2">
                         Folder Name
                     </label>
-                    <ConditionsSelect />
+                    <ConditionsSelect
+                        setSelectedFolder={setSelectedFolder}
+                        selectedFolder={selectedFolder}
+                    />
                 </div>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -101,7 +111,13 @@ export const SidePanel = (props) => {
                         size="sm"
                         style={{ color: 'white', backgroundColor: '#5271FF' }}
                         variant="solid"
-                        onClick={() => onDialogOk(documentName, selectedFolderToAddDoc, fileData[0])}
+                        onClick={() =>
+                            onDialogOk(
+                                documentName,
+                                selectedFolder,
+                                fileData[0]
+                            )
+                        }
                     >
                         Okay
                     </Button>
