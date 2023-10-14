@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { setUrl } from 'store/upload/uploadSlice'
+import { HashLoader } from 'react-spinners'
 
 const Index = () => {
     const dispatch = useDispatch()
@@ -98,13 +99,17 @@ const Index = () => {
         <div>
             <div className="grid grid-col-1 sm:grid-cols-7">
                 <div className="sm:col-span-3 p-4 mx-auto">
-                    <ImageZoom
-                        defaultFolder={defaultFolder}
-                        url={url}
-                        setDefaultFolder={setDefaultFolder}
-                        folder_id={id}
-                        SetUrl={SetUrl}
-                    />
+                    {url ? (
+                        <ImageZoom
+                            defaultFolder={defaultFolder}
+                            url={url}
+                            setDefaultFolder={setDefaultFolder}
+                            folder_id={id}
+                            SetUrl={SetUrl}
+                        />
+                    ) : (
+                        <HashLoader />
+                    )}
                 </div>
                 <div className="sm:col-span-4 flex flex-col gap-3 mt-4 md:mt-0">
                     <div className="flex items-end justify-between w-[100%] gap-2 lg:gap-0">

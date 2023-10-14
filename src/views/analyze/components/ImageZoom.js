@@ -11,6 +11,8 @@ import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { setUrl } from 'store/upload/uploadSlice'
+import HashLoader from "react-spinners/HashLoader";
+
 function ImageZoom({
     defaultFolder,
     url,
@@ -19,14 +21,13 @@ function ImageZoom({
     SetUrl,
 }) {
     const dispatch = useDispatch()
-
     const fileUrl = useSelector((state) => state.upload.url)
     console.log(fileUrl, 'fileleeeee')
     console.log(fileUrl)
     const { token } = useSelector((state) => state.auth.session)
     const [numPages, setNumPages] = useState()
     const [pageNumber, setPageNumber] = useState(1)
-
+    const [loading, setLoading] = useState(false)
     // const [fileUrl,setFileUrl]
     function onDocumentLoadSuccess({ numPages }) {
         setNumPages(numPages)
@@ -53,6 +54,7 @@ function ImageZoom({
     }, [])
 
     const onClickNext = async () => {
+        setLoading(true)
         const res = await axios.get(
             `${process.env.REACT_APP_URL}analyze/pdf?id=${
                 defaultFolder.id
@@ -68,8 +70,10 @@ function ImageZoom({
         setDefaultFolder(res.data)
         SetUrl(res.data.url)
         dispatch(setUrl(res.data.url))
+        setLoading(false)
     }
     const onClickBack = async () => {
+        setLoading(true)
         const res = await axios.get(
             `${process.env.REACT_APP_URL}analyze/pdf?id=${
                 defaultFolder.id
@@ -85,74 +89,81 @@ function ImageZoom({
         setDefaultFolder(res.data)
         SetUrl(res.data.url)
         dispatch(setUrl(res.data.url))
+        setLoading(false)
     }
 
     return (
         <div className="flex">
-            <div>
-                <div className="flex justify-between">
-                    <div
-                        className="hover:cursor-pointer text-3xl"
-                        onClick={onClickBack}
-                    >
-                        <Tooltip title="Move to previous invoice">
-                            <BsArrowLeftSquareFill />
-                        </Tooltip>
+            {loading ? (
+                <HashLoader />
+            ) : (
+                <>
+                    <div>
+                        <div className="flex justify-between">
+                            <div
+                                className="hover:cursor-pointer text-3xl"
+                                onClick={onClickBack}
+                            >
+                                <Tooltip title="Move to previous invoice">
+                                    <BsArrowLeftSquareFill />
+                                </Tooltip>
+                            </div>
+                            <div
+                                className="hover:cursor-pointer text-3xl"
+                                onClick={onClickNext}
+                            >
+                                <Tooltip title="Move to next invoice">
+                                    <BsArrowRightSquareFill />
+                                </Tooltip>
+                            </div>
+                        </div>
+                        <div>
+                            <p>
+                                Page {pageNumber} of {numPages}
+                            </p>
+                            <Document
+                                file={fileUrl}
+                                onLoadSuccess={onDocumentLoadSuccess}
+                                className="flex justify-center items-center"
+                            >
+                                <Page
+                                    pageNumber={pageNumber}
+                                    width={pageWidth}
+                                    renderTextLayer={false}
+                                    renderAnnotationLayer={false}
+                                    customTextRenderer={false}
+                                />
+                            </Document>
+                        </div>
                     </div>
-                    <div
-                        className="hover:cursor-pointer text-3xl"
-                        onClick={onClickNext}
-                    >
-                        <Tooltip title="Move to next invoice">
-                            <BsArrowRightSquareFill />
-                        </Tooltip>
+                    <div className="my-auto">
+                        <div
+                            className="hover:cursor-pointer text-3xl"
+                            onClick={() => {
+                                setPageNumber(
+                                    pageNumber === 1 ? numPages : pageNumber - 1
+                                )
+                            }}
+                        >
+                            <Tooltip title="Move to previous page">
+                                <BsArrowUpSquareFill />
+                            </Tooltip>
+                        </div>
+                        <div
+                            className="hover:cursor-pointer text-3xl"
+                            onClick={() => {
+                                setPageNumber(
+                                    pageNumber === numPages ? 1 : pageNumber + 1
+                                )
+                            }}
+                        >
+                            <Tooltip title="Move to next page">
+                                <BsArrowDownSquareFill />
+                            </Tooltip>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <p>
-                        Page {pageNumber} of {numPages}
-                    </p>
-                    <Document
-                        file={fileUrl}
-                        onLoadSuccess={onDocumentLoadSuccess}
-                        className="flex justify-center items-center"
-                    >
-                        <Page
-                            pageNumber={pageNumber}
-                            width={pageWidth}
-                            renderTextLayer={false}
-                            renderAnnotationLayer={false}
-                            customTextRenderer={false}
-                        />
-                    </Document>
-                </div>
-            </div>
-            <div className="my-auto">
-                <div
-                    className="hover:cursor-pointer text-3xl"
-                    onClick={() => {
-                        setPageNumber(
-                            pageNumber === 1 ? numPages : pageNumber - 1
-                        )
-                    }}
-                >
-                    <Tooltip title="Move to previous page">
-                        <BsArrowUpSquareFill />
-                    </Tooltip>
-                </div>
-                <div
-                    className="hover:cursor-pointer text-3xl"
-                    onClick={() => {
-                        setPageNumber(
-                            pageNumber === numPages ? 1 : pageNumber + 1
-                        )
-                    }}
-                >
-                    <Tooltip title="Move to next page">
-                        <BsArrowDownSquareFill />
-                    </Tooltip>
-                </div>
-            </div>
+                </>
+            )}
         </div>
     )
 }
