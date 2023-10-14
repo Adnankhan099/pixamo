@@ -114,6 +114,7 @@ const Integration = () => {
         setViewIntegration(false)
     }
     const [active, setActive] = useState([])
+    console.log(active,"activeee");
 
     const getStatus = async () => {
         const res = await axios.get(`${process.env.REACT_APP_URL}api_status`, {
@@ -188,7 +189,7 @@ const Integration = () => {
                 }
             } else if (name === 'AWS s3 bucket') {
                 const res = await toggle('s3', 1)
-                console.log('res=>', res.response.data.message)
+                console.log('res=>', res)
                 const result = handleNotificationOnSwitch(
                     res,
                     name,
@@ -265,7 +266,7 @@ const Integration = () => {
                 }
             } else if (name === 'AWS s3 bucket') {
                 const res = await toggle('s3', 0)
-                console.log('res=>', res.response.data.message)
+                console.log('res=>', res)
                 const result = handleNotificationOnSwitch(
                     res,
                     name,
