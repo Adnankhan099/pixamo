@@ -9,7 +9,8 @@ import {
 import Tooltip from 'components/ui/Tooltip'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
-
+import { useDispatch } from 'react-redux'
+import { setUrl } from 'store/upload/uploadSlice'
 function ImageZoom({
     defaultFolder,
     url,
@@ -17,12 +18,16 @@ function ImageZoom({
     folder_id,
     SetUrl,
 }) {
-    const fileUrl=useSelector((state)=>state.upload.url)
+    const dispatch = useDispatch()
+
+    const fileUrl = useSelector((state) => state.upload.url)
+    console.log(fileUrl, 'fileleeeee')
     console.log(fileUrl)
     const { token } = useSelector((state) => state.auth.session)
     const [numPages, setNumPages] = useState()
     const [pageNumber, setPageNumber] = useState(1)
 
+    // const [fileUrl,setFileUrl]
     function onDocumentLoadSuccess({ numPages }) {
         setNumPages(numPages)
     }
@@ -62,6 +67,7 @@ function ImageZoom({
         )
         setDefaultFolder(res.data)
         SetUrl(res.data.url)
+        dispatch(setUrl(res.data.url))
     }
     const onClickBack = async () => {
         const res = await axios.get(
@@ -78,6 +84,7 @@ function ImageZoom({
         )
         setDefaultFolder(res.data)
         SetUrl(res.data.url)
+        dispatch(setUrl(res.data.url))
     }
 
     return (
