@@ -1,16 +1,8 @@
 import React from 'react'
-import { Upload, Button } from 'components/ui'
-import { HiOutlineCloudUpload } from 'react-icons/hi'
+import { Upload } from 'components/ui'
 import { FcImageFile } from 'react-icons/fc'
 
 const UploadModal = () => {
-    const onDialogClose = () => {
-        console.log('onDialogClose')
-    }
-    const onDialogOk = () => {
-        console.log('onDialogOk')
-    }
-
     return (
         <div>
             <div>

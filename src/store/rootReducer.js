@@ -4,6 +4,7 @@ import auth from './auth'
 import base from './base'
 import locale from './locale/localeSlice'
 import upload from './upload/uploadSlice'
+import email from './email/emailSlice'
 
 const rootReducer = (asyncReducers) => (state, action) => {
     const combinedReducer = combineReducers({
@@ -12,6 +13,7 @@ const rootReducer = (asyncReducers) => (state, action) => {
         base,
         locale,
         upload,
+        email,
         ...asyncReducers,
     })
     return combinedReducer(state, action)

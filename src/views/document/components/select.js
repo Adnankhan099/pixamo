@@ -4,7 +4,6 @@ import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
-import { selectFolder } from '../store/dataSlice'
 import { useState } from 'react'
 
 const ConditionsSelect = ({ row, setSelectedFolder, selectedFolder, }) => {
@@ -22,7 +21,6 @@ const ConditionsSelect = ({ row, setSelectedFolder, selectedFolder, }) => {
         const list = resData.map((item) => {
             return { value: item.id, label: item.name }
         })
-        console.log('hellyeah', list)
         setOption(list)
     }, [resData])
 
@@ -30,7 +28,7 @@ const ConditionsSelect = ({ row, setSelectedFolder, selectedFolder, }) => {
 
     const getData = async () => {
         const response = await axios.get(
-            `https://api.voagstech.com/api/folder`,
+            `${process.env.REACT_APP_URL}folder`,
             {
                 headers: header,
             }
@@ -52,15 +50,9 @@ const ConditionsSelect = ({ row, setSelectedFolder, selectedFolder, }) => {
         setSelectedValue(waspa)
     }, [selectedFolder, row, option])
 
-    console.log('ramaya', selectedFolder)
-
     const handleChangeSelect = (value) => {
         setSelectedFolder(value)
     }
-
-
-        console.log('overbigdedha', selectedFolder)
-
 
     return (
         <div>
@@ -70,9 +62,7 @@ const ConditionsSelect = ({ row, setSelectedFolder, selectedFolder, }) => {
                 onChange={(e) => {
                     console.log('selsect', e.value, row)
                     handleChangeSelect(e.value)
-                    // dispatch(selectFolder(e.value))
                 }}
-                // value={option.find((item) => item.value === row?.folder_id)}
                 value={selectedValue}
             ></Select>
         </div>

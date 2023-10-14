@@ -2,11 +2,11 @@ import React from 'react'
 import { toast, Notification } from 'components/ui'
 import { ConfirmDialog } from 'components/shared'
 import { useSelector, useDispatch } from 'react-redux'
-import { toggleDeleteConfirmation } from '../store/stateSlice'
+import { toggleDeleteConfirmation, setSelectedRows } from '../store/stateSlice'
 import { deleteProduct, getProducts } from '../store/dataSlice'
 import axios from 'axios'
 
-const ProductDeleteConfirmation = ({header}) => {
+const ProductDeleteConfirmation = ({ header }) => {
     const dispatch = useDispatch()
     const dialogOpen = useSelector(
         (state) => state.salesProductList.state.deleteConfirmation
@@ -24,22 +24,27 @@ const ProductDeleteConfirmation = ({header}) => {
 
     const onDelete = async () => {
         dispatch(toggleDeleteConfirmation(false))
-        const id = encodeURIComponent(JSON.stringify([selectedProduct]))
+        const id = encodeURIComponent(
+            JSON.stringify(
+                Array.isArray(selectedProduct)
+                    ? selectedProduct
+                    : [selectedProduct]
+            )
+        )
         const response = await axios.post(
             `https://api.voagstech.com/api/document/delete?id=${id}`,
             null,
             { headers: header }
         )
-        console.log(response)
-        // const success = await deleteProduct({ id:  })
-
         if (response) {
             dispatch(getProducts(tableData))
+            dispatch(setSelectedRows([]))
             toast.push(
                 <Notification
                     title={'Successfuly Deleted'}
                     type="success"
-                    duration={2500}
+                    duration={4500}
+                style={{overflowX: 'auto' }}
                 >
                     Product successfuly deleted
                 </Notification>,

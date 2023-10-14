@@ -6,8 +6,6 @@ import store, { persistor } from './store'
 import Theme from 'components/template/Theme'
 import Layout from 'components/layout'
 import history from './history'
-import mockServer from './mock'
-import appConfig from 'configs/app.config'
 import './locales'
 import { pdfjs } from 'react-pdf'
 
@@ -15,11 +13,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.js',
     import.meta.url
 ).toString()
-const environment = process.env.NODE_ENV
-
-// if (appConfig.enableMock) {
-//     mockServer({ environment })
-// }
 
 function App() {
     return (

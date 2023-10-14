@@ -4,10 +4,22 @@ import { injectReducer } from 'store/index'
 import { AdaptableCard } from 'components/shared'
 import ProductTable from './components/ProductTable'
 import ProductTableTools from './components/ProductTableTools'
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import axios from 'axios'
 
 injectReducer('salesProductList', reducer)
 
 const ProductList = () => {
+    const { token } = useSelector((state) => state.auth.session)
+    const runOnLoad = async () => {
+        const res = await axios.get(`${process.env.REACT_APP_URL}runjob`, {
+            headers: { authorization: `Bearer ${token}` },
+        })
+    }
+    useEffect(() => {
+        runOnLoad()
+    }, [])
     return (
         <AdaptableCard className="h-full p-4" bodyClass="h-full">
             <div className="lg:flex items-center justify-between mb-4">

@@ -37,7 +37,7 @@ const BasePicker = forwardRef((props, ref) => {
         onClear,
         disabled,
         type,
-        placement="bottom-start",
+        placement = 'bottom-start',
     } = props
 
     const handleInputClick = () => {
@@ -134,7 +134,7 @@ const BasePicker = forwardRef((props, ref) => {
                 onKeyDown={handleKeyDown}
                 onBlur={handleInputBlur}
                 onFocus={handleInputFocus}
-                onChange={onChange}
+                onChange={(e) => onChange(e.target.value)}
                 autoComplete="off"
                 type={type}
                 disabled={disabled}

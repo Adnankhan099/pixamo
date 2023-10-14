@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { Button } from 'components/ui'
+import { toast, Notification } from 'components/ui'
 import Form from './form'
 import { HiPlusCircle } from 'react-icons/hi'
 import axios from 'axios'
 import { Drawer } from 'components/ui'
 import { useSelector, useDispatch } from 'react-redux'
+import { updateProductList } from '../store/dataSlice'
 
 export const SidePanel = (props) => {
 
@@ -32,23 +34,56 @@ export const SidePanel = (props) => {
 
     const header = { authorization: `Bearer ${token}` }
 
-    const onDialogOk = async (name) => {
-        const res = await axios.post(
-            `${process.env.REACT_APP_URL}folder?name=${name}`,
-            null,
-            {
-                headers: header
-            }
-        );
-        console.log('res', res)
-        // setIsOpen(false)
-        if (res) window.location.reload();
+    const onDialogOk = async (name, condition, operation) => {
+        const conditions = encodeURIComponent(JSON.stringify(condition))
+        const operations = encodeURIComponent(JSON.stringify(operation))
+        try {
+            const res = await axios.post(
+                `${process.env.REACT_APP_URL}folder?name=${name}&condition=${conditions}&operation=${operations}`,
+                null,
+                {
+                    headers: header
+                }
+            );
+            const response = await axios.get(`${process.env.REACT_APP_URL}folder`, {
+                headers: header,
+            })
+            toast.push(
+                <Notification
+                    title={'Successfuly Added'}
+                    type="success"
+                    duration={4500}
+                style={{overflowX: 'auto' }}
+                >
+                    {res.data.message}
+                </Notification>,
+                {
+                    placement: 'top-center',
+                }
+            )
+            dispatch(updateProductList(response.data.data))
+        } catch (error) {
+            toast.push(
+                <Notification
+                    title={'Error'}
+                    type="danger"
+                    duration={4500}
+                style={{overflowX: 'auto' }}
+                >
+                    {error.response.data.errors.name[0]}
+                </Notification>,
+                {
+                    placement: 'top-center',
+                }
+            )
+        }
+        closePanel()
     }
 
     return (
         <>
             <Button variant="solid" size="sm" icon={<HiPlusCircle />} onClick={openPanel} style={{ backgroundColor: "#5271FF", color: "white" }}>
-                Import
+                Add
             </Button>
             <Drawer
                 title="Theme Config"

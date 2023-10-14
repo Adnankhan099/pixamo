@@ -59,7 +59,6 @@ const Index = () => {
             headers: header,
         })
         setDefaultId(res.data.data[0].id)
-        console.log(res.data.data)
         setOption(
             res.data.data.map((item) => ({ value: item.id, label: item.name }))
         )
@@ -74,7 +73,6 @@ const Index = () => {
                 headers: header,
             }
         )
-        console.log(res.data)
         setDefaultFolder(res.data)
         SetUrl(res.data.url)
         dispatch(setUrl(res.data.url))
@@ -95,7 +93,6 @@ const Index = () => {
             setId(selected.map((item) => item.value))
         }
     }, [selected])
-    console.log(id)
 
     return (
         <div>

@@ -100,6 +100,7 @@ const Upload = React.forwardRef((props, ref) => {
             let updatedFiles = addNewFiles(newFiles)
             setFiles(updatedFiles)
             dispatch(setFile(updatedFiles))
+            
             onChange?.(updatedFiles, files)
         }
     }

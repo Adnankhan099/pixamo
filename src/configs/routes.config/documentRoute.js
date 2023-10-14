@@ -31,7 +31,12 @@ const appsRoute = [
             headerContainer: true,
         },
     },
-    
+    {
+        key: 'appsAccount.email',
+        path: `/email`,
+        component: React.lazy(() => import('views/email')),
+        authority: [ADMIN, USER],
+    },
 ]
 
 export default appsRoute

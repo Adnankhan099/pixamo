@@ -1,54 +1,23 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-// import { Avatar } from 'components/ui'
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { DataTable } from 'components/shared'
-import {  HiOutlineTrash } from 'react-icons/hi'
-// import { FiPackage } from 'react-icons/fi'
+import { HiOutlineTrash } from 'react-icons/hi'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-    // getProducts,
-    setTableData,
-    updateProductList,
-} from '../store/dataSlice'
+import { setTableData, updateProductList } from '../store/dataSlice'
 import { setSelectedProduct } from '../store/stateSlice'
-import { toggleDeleteConfirmation } from '../store/stateSlice'
-// import useThemeClass from 'utils/hooks/useThemeClass'
+import {
+    toggleDeleteConfirmation,
+    setSelectedRows,
+    addRowItem,
+    removeRowItem,
+} from '../store/stateSlice'
 import ProductDeleteConfirmation from './ProductDeleteConfirmation'
-// import { useNavigate } from 'react-router-dom'
 import cloneDeep from 'lodash/cloneDeep'
-// import { data1 } from './data'
-// import StaticBackdrop from './dialog'
 import EditOption from './editOption'
 import axios from 'axios'
-
-// const inventoryStatusColor = {
-//     0: {
-//         label: 'In Stock',
-//         dotClass: 'bg-emerald-500',
-//         textClass: 'text-emerald-500',
-//     },
-//     1: {
-//         label: 'Limited',
-//         dotClass: 'bg-amber-500',
-//         textClass: 'text-amber-500',
-//     },
-//     2: {
-//         label: 'Out of Stock',
-//         dotClass: 'bg-red-500',
-//         textClass: 'text-red-500',
-//     },
-// }
+import { Link } from 'react-router-dom'
 
 const ActionColumn = ({ row, header, setGetDataApiFlag }) => {
-    // const { token } = useSelector((state) => state.auth.session)
     const dispatch = useDispatch()
-    // const { textTheme } = useThemeClass()
-    // const navigate = useNavigate()
-
-    // const onEdit = (row) => {
-    //     return <StaticBackdrop />
-    // }
-    // const header = { Authorization: `Bearer ${token}` }
-
     const onDelete = (row) => {
         dispatch(toggleDeleteConfirmation(true))
         dispatch(setSelectedProduct(row.id))
@@ -71,27 +40,15 @@ const ActionColumn = ({ row, header, setGetDataApiFlag }) => {
     )
 }
 
-// const ProductColumn = ({ row }) => {
-//     const avatar = row.img ? (
-//         <Avatar src={row.img} />
-//     ) : (
-//         <Avatar icon={<FiPackage />} />
-//     )
-
-//     return (
-//         <div className="flex items-center">
-//             {avatar}
-//             <span className={`ml-2 rtl:mr-2 font-semibold`}>{row.name}</span>
-//         </div>
-//     )
-// }
-
 const ProductTable = () => {
     const { token } = useSelector((state) => state.auth.session)
     const tableRef = useRef(null)
-    const data = useSelector((state) => state.salesProductList.data.productList) 
-    const [getDataApiFlag,setGetDataApiFlag] = useState(true)
-    console.log(data)
+    const data = useSelector((state) => state.salesProductList.data.productList)
+    const [getDataApiFlag, setGetDataApiFlag] = useState(true)
+    const { selectedRows } = useSelector(
+        (state) => state.salesProductList.state
+    )
+    console.log('selectedRows=>', selectedRows)
 
     const dispatch = useDispatch()
 
@@ -116,11 +73,6 @@ const ProductTable = () => {
         getData()
     }, [getDataApiFlag])
 
-    // useEffect(() => {
-    //     fetchData()
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [pageIndex, pageSize, sort])
-
     useEffect(() => {
         if (tableRef) {
             tableRef.current.resetSorting()
@@ -132,15 +84,16 @@ const ProductTable = () => {
         [pageIndex, pageSize, sort, query, total]
     )
 
-    // const fetchData = () => {
-    //     dispatch(getProducts({ pageIndex, pageSize, sort, query, filterData }))
-    // }
-
     const columns = useMemo(
         () => [
             {
                 header: 'Name',
                 accessorKey: 'name',
+                cell: (props) => (
+                    <Link to={`/document?docName=${props.row.original.id}`}>
+                        {props.row.original.name}
+                    </Link>
+                ),
             },
             {
                 header: 'Invoices',
@@ -158,27 +111,6 @@ const ProductTable = () => {
                     />
                 ),
             },
-            // {
-            //     header: 'Status',
-            //     accessorKey: 'status',
-            //     cell: (props) => {
-            //         const { status } = props.row.original
-            //         return (
-            //             <div className="flex items-center gap-2">
-            //                 <Badge
-            //                     className={
-            //                         inventoryStatusColor[status].dotClass
-            //                     }
-            //                 />
-            //                 <span
-            //                     className={`capitalize font-semibold ${inventoryStatusColor[status].textClass}`}
-            //                 >
-            //                     {inventoryStatusColor[status].label}
-            //                 </span>
-            //             </div>
-            //         )
-            //     },
-            // },
         ],
         []
     )
@@ -202,6 +134,30 @@ const ProductTable = () => {
         dispatch(setTableData(newTableData))
     }
 
+    const onRowSelect = (checked, row) => {
+        if (checked) {
+            dispatch(addRowItem([row.id]))
+        } else {
+            dispatch(removeRowItem(row.id))
+        }
+    }
+
+    const onAllRowSelect = useCallback(
+        (checked, rows) => {
+            if (checked) {
+                const originalRows = rows.map((row) => row.original)
+                const selectedIds = []
+                originalRows.forEach((row) => {
+                    selectedIds.push(row.id)
+                })
+                dispatch(setSelectedRows(selectedIds))
+            } else {
+                dispatch(setSelectedRows([]))
+            }
+        },
+        [dispatch]
+    )
+
     return (
         <>
             <DataTable
@@ -215,6 +171,9 @@ const ProductTable = () => {
                 onPaginationChange={onPaginationChange}
                 onSelectChange={onSelectChange}
                 onSort={onSort}
+                onCheckBoxChange={onRowSelect}
+                onIndeterminateCheckBoxChange={onAllRowSelect}
+                selectable
             />
             <ProductDeleteConfirmation header={header} />
         </>
