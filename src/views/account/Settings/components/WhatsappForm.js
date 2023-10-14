@@ -2,7 +2,7 @@ import React from 'react'
 import Input from 'components/ui/Input'
 import { HiOutlineUser} from 'react-icons/hi'
 
-const WhatsappForm = ({data}) => {
+const WhatsappForm = ({data,set}) => {
     return (
         <div>
             <div className="my-4">
@@ -12,8 +12,9 @@ const WhatsappForm = ({data}) => {
                 <Input
                     placeholder="Enter your Whatsapp Number"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.number}
                     onChange={(e) => {
-                        data.number = e.target.value
+                        set({ ...data, number: e.target.value })
                     }}
                 />
             </div>

@@ -1,8 +1,7 @@
 import Input from 'components/ui/Input'
-import Tooltip from 'components/ui/Tooltip'
-import { HiOutlineUser, HiOutlineExclamationCircle } from 'react-icons/hi'
+import { HiOutlineUser } from 'react-icons/hi'
 
-const AWSS3form = ({data}) => {
+const AWSS3form = ({ data, set }) => {
     return (
         <div>
             <div className="my-4">
@@ -12,61 +11,62 @@ const AWSS3form = ({data}) => {
                 <Input
                     placeholder="Enter your Host"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.host}
                     onChange={(e) => {
-                        data.host = e.target.value
-                        
+                        set({ ...data, host: e.target.value })
                     }}
                 />
             </div>
             <div className="mb-4">
                 <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">
-                Port
+                    Port
                 </label>
                 <Input
                     placeholder="Enter your Port"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.port}
                     onChange={(e) => {
-                        data.port = e.target.value
-                        
+                        set({ ...data, port: e.target.value })
                     }}
                 />
             </div>
             <div className="mb-4">
                 <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">
-                ENC
+                    ENC
                 </label>
                 <Input
                     placeholder="Enter your ENC"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.enc}
                     onChange={(e) => {
-                        data.enc = e.target.value
-                        
+                        set({ ...data, enc: e.target.value })
                     }}
                 />
             </div>
             <div className="">
                 <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">
-                Password
+                    Password
                 </label>
                 <Input
+                    type="password"
                     placeholder="Enter your Password"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.password}
                     onChange={(e) => {
-                        data.password = e.target.value
-                        
+                        set({ ...data, password: e.target.value })
                     }}
                 />
             </div>
             <div className="">
                 <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">
-                Email
+                    Email
                 </label>
                 <Input
                     placeholder="Enter your Email"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.email}
                     onChange={(e) => {
-                        data.email = e.target.value
-                        
+                        set({ ...data, email: e.target.value })
                     }}
                 />
             </div>

@@ -1,7 +1,7 @@
 import Input from 'components/ui/Input'
 import { HiOutlineUser } from 'react-icons/hi'
 
-const AWSS3form = ({data}) => {
+const AWSS3form = ({data,set}) => {
     return (
         <div>
             <div className="my-4">
@@ -11,9 +11,9 @@ const AWSS3form = ({data}) => {
                 <Input
                     placeholder="Enter your Host"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.host}
                     onChange={(e) => {
-                        data.host = e.target.value
-                        
+                        set({ ...data, host: e.target.value })
                     }}
                 />
             </div>
@@ -24,9 +24,9 @@ const AWSS3form = ({data}) => {
                 <Input
                     placeholder="Enter your Port"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.port}
                     onChange={(e) => {
-                        data.port = e.target.value
-                        
+                        set({ ...data, port: e.target.value })
                     }}
                 />
             </div>
@@ -37,9 +37,9 @@ const AWSS3form = ({data}) => {
                 <Input
                     placeholder="Enter your ENC"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.enc}
                     onChange={(e) => {
-                        data.enc = e.target.value
-                        
+                        set({ ...data, enc: e.target.value })
                     }}
                 />
             </div>
@@ -49,10 +49,11 @@ const AWSS3form = ({data}) => {
                 </label>
                 <Input
                     placeholder="Enter your Password"
+                    type="password"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.password}
                     onChange={(e) => {
-                        data.password = e.target.value
-                        
+                        set({ ...data, password: e.target.value })
                     }}
                 />
             </div>
@@ -63,9 +64,9 @@ const AWSS3form = ({data}) => {
                 <Input
                     placeholder="Enter your Email"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.email}
                     onChange={(e) => {
-                        data.email = e.target.value
-                        
+                        set({ ...data, email: e.target.value })
                     }}
                 />
             </div>

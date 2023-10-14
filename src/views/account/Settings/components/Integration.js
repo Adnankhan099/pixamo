@@ -65,22 +65,35 @@ const Integration = () => {
             },
         ],
     })
-    const value = {
+    const [SMTP, setSMTP] = useState({
         host: '',
         port: '',
         enc: '',
         password: '',
         email: '',
-    }
-    const value1 = {
+    })
+    const [IMAP, setIMAP] = useState({
+        host: '',
+        port: '',
+        enc: '',
+        password: '',
+        email: '',
+    })
+    const [S3, setS3] = useState({
         aws_access_key_id: '',
         aws_secret_access_key: '',
         aws_default_region: '',
         aws_bucket: '',
-    }
-    const whatsapp = {
+    })
+    const [TEXTRACT, setTEXTRACT] = useState({
+        aws_access_key_id: '',
+        aws_secret_access_key: '',
+        aws_default_region: '',
+        aws_bucket: '',
+    })
+    const [whatsapp, setWhatsapp] = useState({
         number: '',
-    }
+    })
     const [qr, setQr] = useState('')
     const [url, setUrl] = useState('')
     const [viewIntegration, setViewIntegration] = useState(false)
@@ -310,7 +323,6 @@ const Integration = () => {
                 const res = await toggle('textract', 0)
                 const result = handleNotificationOnSwitch(
                     res,
-                    res.response.data.message,
                     name,
                     `${name} De-activated`
                 )
@@ -333,6 +345,44 @@ const Integration = () => {
         }
     }
 
+    const emptyFieldOnSuccess = (name,status) => {
+        if (name === 'SMTP' && status === 'success') {
+            setSMTP({
+                host: '',
+                port: '',
+                enc: '',
+                password: '',
+                email: '',
+            })
+        } else if (name === 'IMAP' && status === 'success') {
+            setIMAP({
+                host: '',
+                port: '',
+                enc: '',
+                password: '',
+                email: '',
+            })
+        } else if (name === 'AWS s3 bucket' && status === 'success') {
+            setS3({
+                aws_access_key_id: '',
+                aws_secret_access_key: '',
+                aws_default_region: '',
+                aws_bucket: '',
+            })
+        } else if (name === 'TEXTRACT' && status === 'success') {
+            setTEXTRACT({
+                aws_access_key_id: '',
+                aws_secret_access_key: '',
+                aws_default_region: '',
+                aws_bucket: '',
+            })
+        } else if (name === 'Whatsapp' && status === 'success') {
+            setWhatsapp({
+                number: '',
+            })
+        }
+    }
+
     const notification = (name, status, message) => {
         toast.push(
             <Notification
@@ -351,13 +401,14 @@ const Integration = () => {
                 placement: 'top-center',
             }
         )
+        emptyFieldOnSuccess(name,status)
     }
 
     const IntegrationConnect = async () => {
         if (intergrationDetails.name === 'SMTP') {
             try {
                 const res = await axios.post(
-                    `${process.env.REACT_APP_URL}store_api_config?key=smtp&host=${value.host}&port=${value.port}&enc=${value.enc}&password=${value.password}&email=${value.email}`,
+                    `${process.env.REACT_APP_URL}store_api_config?key=smtp&host=${SMTP.host}&port=${SMTP.port}&enc=${SMTP.enc}&password=${SMTP.password}&email=${SMTP.email}`,
                     null,
                     { headers: header }
                 )
@@ -377,7 +428,7 @@ const Integration = () => {
         } else if (intergrationDetails.name === 'IMAP') {
             try {
                 const res = await axios.post(
-                    `${process.env.REACT_APP_URL}store_api_config?key=imap&host=${value.host}&port=${value.port}&enc=${value.enc}&password=${value.password}&email=${value.email}`,
+                    `${process.env.REACT_APP_URL}store_api_config?key=imap&host=${IMAP.host}&port=${IMAP.port}&enc=${IMAP.enc}&password=${IMAP.password}&email=${IMAP.email}`,
                     null,
                     { headers: header }
                 )
@@ -397,7 +448,7 @@ const Integration = () => {
         } else if (intergrationDetails.name === 'AWS s3 bucket') {
             try {
                 const res = await axios.post(
-                    `${process.env.REACT_APP_URL}store_api_config?key=s3&aws_access_key_id=${value1.aws_access_key_id}&aws_secret_access_key=${value1.aws_secret_access_key}&aws_default_region=${value1.aws_default_region}&aws_bucket=${value1.aws_bucket}`,
+                    `${process.env.REACT_APP_URL}store_api_config?key=s3&aws_access_key_id=${S3.aws_access_key_id}&aws_secret_access_key=${S3.aws_secret_access_key}&aws_default_region=${S3.aws_default_region}&aws_bucket=${S3.aws_bucket}`,
                     null,
                     { headers: header }
                 )
@@ -417,7 +468,7 @@ const Integration = () => {
         } else if (intergrationDetails.name === 'TEXTRACT') {
             try {
                 const res = await axios.post(
-                    `${process.env.REACT_APP_URL}store_api_config?key=textract&aws_access_key_id=${value1.aws_access_key_id}&aws_secret_access_key=${value1.aws_secret_access_key}&aws_default_region=${value1.aws_default_region}&aws_bucket=${value1.aws_bucket}`,
+                    `${process.env.REACT_APP_URL}store_api_config?key=textract&aws_access_key_id=${TEXTRACT.aws_access_key_id}&aws_secret_access_key=${TEXTRACT.aws_secret_access_key}&aws_default_region=${TEXTRACT.aws_default_region}&aws_bucket=${TEXTRACT.aws_bucket}`,
                     null,
                     { headers: header }
                 )
@@ -576,19 +627,19 @@ const Integration = () => {
                 </div>
                 <div className="max-h-[350px] overflow-auto">
                     {intergrationDetails.name === 'SMTP' && (
-                        <SMTPform data={value} />
+                        <SMTPform data={SMTP} set={setSMTP} />
                     )}
                     {intergrationDetails.name === 'IMAP' && (
-                        <IMAPform data={value} />
+                        <IMAPform data={IMAP} set={setIMAP} />
                     )}
                     {intergrationDetails.name === 'AWS s3 bucket' && (
-                        <AWSS3form data={value1} />
+                        <AWSS3form data={S3} set={setS3} />
                     )}
                     {intergrationDetails.name === 'Whatsapp' && (
-                        <WhatsappForm data={whatsapp} />
+                        <WhatsappForm data={whatsapp} set={setWhatsapp} />
                     )}
                     {intergrationDetails.name === 'TEXTRACT' && (
-                        <TEXTRACTform data={value1} />
+                        <TEXTRACTform data={TEXTRACT} set={setTEXTRACT} />
                     )}
                     {intergrationDetails.name === 'Google Drive' && <></>}
                     <div className="flex w-[50%] mx-auto justify-between mt-4">

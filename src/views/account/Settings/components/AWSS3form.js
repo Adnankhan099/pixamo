@@ -3,7 +3,7 @@ import Input from 'components/ui/Input'
 import Tooltip from 'components/ui/Tooltip'
 import { HiOutlineUser, HiOutlineExclamationCircle } from 'react-icons/hi'
 
-const AWSS3form = ({data}) => {
+const AWSS3form = ({ data, set }) => {
     return (
         <div>
             <div className="my-4">
@@ -13,9 +13,9 @@ const AWSS3form = ({data}) => {
                 <Input
                     placeholder="Enter your AWS Access Key ID"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.aws_access_key_id}
                     onChange={(e) => {
-                        data.aws_access_key_id = e.target.value
-                        
+                        set({ ...data, aws_access_key_id: e.target.value })
                     }}
                 />
             </div>
@@ -26,9 +26,9 @@ const AWSS3form = ({data}) => {
                 <Input
                     placeholder="Enter your AWS Secret Access Key"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.aws_secret_access_key}
                     onChange={(e) => {
-                        data.aws_secret_access_key = e.target.value
-                        
+                        set({ ...data, aws_secret_access_key: e.target.value })
                     }}
                 />
             </div>
@@ -39,9 +39,9 @@ const AWSS3form = ({data}) => {
                 <Input
                     placeholder="Enter your AWS Default Region"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.aws_default_region}
                     onChange={(e) => {
-                        data.aws_default_region = e.target.value
-                        
+                        set({ ...data, aws_default_region: e.target.value })
                     }}
                 />
             </div>
@@ -52,9 +52,9 @@ const AWSS3form = ({data}) => {
                 <Input
                     placeholder="Enter your AWS Bucket"
                     prefix={<HiOutlineUser className="text-lg" />}
+                    value={data.aws_bucket}
                     onChange={(e) => {
-                        data.aws_bucket = e.target.value
-                        
+                        set({ ...data, aws_bucket: e.target.value })
                     }}
                 />
             </div>

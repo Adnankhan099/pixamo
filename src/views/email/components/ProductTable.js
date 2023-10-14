@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Input from 'components/ui/Input'
 import DialogButton from 'views/email/components/button'
 import { toast, Notification } from 'components/ui'
 import Upload from '../Upload'
 import axios from 'axios'
 import { AiOutlineUpload } from 'react-icons/ai'
+import { setEmailFile } from 'store/email/emailSlice'
 
 const ProductTable = () => {
+    const dispatch = useDispatch()
     const { token } = useSelector((state) => state.auth.session)
     const { file } = useSelector((state) => state.email)
     const header = { authorization: `Bearer ${token}` }
@@ -58,6 +60,9 @@ const ProductTable = () => {
                     placement: 'top-center',
                 }
             )
+            setEmail('')
+            setBody('')
+            dispatch(setEmailFile([]))
         } catch (err) {
             toast.push(
                 <Notification
